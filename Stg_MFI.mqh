@@ -6,118 +6,116 @@
 
 /**
  * @file
- * Implements MFI strategy.
+ * Implements MFI strategy based on the Money Flow Index indicator.
  */
 
 // Includes.
-#include "../../EA31337-classes/Indicators/Indi_MFI.mqh"
-#include "../../EA31337-classes/Strategy.mqh"
+#include <EA31337-classes/Indicators/Indi_MFI.mqh>
+#include <EA31337-classes/Strategy.mqh>
 
 // User input params.
-INPUT string __MFI_Parameters__ = "-- Settings for the Money Flow Index indicator --";  // >>> MFI <<<
-INPUT uint MFI_Active_Tf = 0;  // Activate timeframes (1-255, e.g. M1=1,M5=2,M15=4,M30=8,H1=16,H2=32...)
+INPUT string __MFI_Parameters__ = "-- MFI strategy params --";  // >>> MFI <<<
+INPUT int MFI_Active_Tf = 0;  // Activate timeframes (1-255, e.g. M1=1,M5=2,M15=4,M30=8,H1=16,H2=32...)
 INPUT ENUM_TRAIL_TYPE MFI_TrailingStopMethod = 7;     // Trail stop method
 INPUT ENUM_TRAIL_TYPE MFI_TrailingProfitMethod = 22;  // Trail profit method
-INPUT int MFI_Period_M1 = 2;                          // Period for M1
-INPUT int MFI_Period_M5 = 22;                         // Period for M5
-INPUT int MFI_Period_M15 = 8;                         // Period for M15
-INPUT int MFI_Period_M30 = 12;                        // Period for M30
-INPUT double MFI_SignalLevel = 0.9;                   // Signal level
-INPUT uint MFI_Shift = 0;                             // Shift (relative to the current bar, 0 - default)
-INPUT int MFI1_SignalMethod = 0;                      // Signal method for M1 (0-1)
-INPUT int MFI5_SignalMethod = 0;                      // Signal method for M5 (0-1)
-INPUT int MFI15_SignalMethod = 0;                     // Signal method for M15 (0-1)
-INPUT int MFI30_SignalMethod = 0;                     // Signal method for M30 (0-1)
-INPUT int MFI1_OpenCondition1 = 874;                  // Open condition 1 for M1 (0-1023)
-INPUT int MFI1_OpenCondition2 = 0;                    // Open condition 2 for M1 (0-)
+INPUT int MFI_Period = 2;                             // Period
+INPUT double MFI_SignalOpenLevel = 0.9;               // Signal open level
+INPUT int MFI_Shift = 0;                              // Shift (relative to the current bar, 0 - default)
+INPUT int MFI1_SignalBaseMethod = 0;                  // Signal base method (0-1)
+INPUT int MFI1_OpenCondition1 = 874;                  // Open condition 1 (0-1023)
+INPUT int MFI1_OpenCondition2 = 0;                    // Open condition 2 (0-)
 INPUT ENUM_MARKET_EVENT MFI1_CloseCondition = 14;     // Close condition for M1
+INPUT double MFI_MaxSpread = 6.0;                     // Max spread to trade (pips)
 
-INPUT int MFI5_OpenCondition1 = 1;                // Open condition 1 for M5 (0-1023)
-INPUT int MFI5_OpenCondition2 = 0;                // Open condition 2 for M5 (0-)
-INPUT ENUM_MARKET_EVENT MFI5_CloseCondition = 2;  // Close condition for M5
+// Struct to define strategy parameters to override.
+struct Stg_MFI_Params : Stg_Params {
+  unsigned int MFI_Period;
+  ENUM_APPLIED_PRICE MFI_Applied_Price;
+  int MFI_Shift;
+  ENUM_TRAIL_TYPE MFI_TrailingStopMethod;
+  ENUM_TRAIL_TYPE MFI_TrailingProfitMethod;
+  double MFI_SignalOpenLevel;
+  long MFI_SignalBaseMethod;
+  long MFI_SignalOpenMethod1;
+  long MFI_SignalOpenMethod2;
+  double MFI_SignalCloseLevel;
+  ENUM_MARKET_EVENT MFI_SignalCloseMethod1;
+  ENUM_MARKET_EVENT MFI_SignalCloseMethod2;
+  double MFI_MaxSpread;
 
-INPUT int MFI15_OpenCondition1 = 292;              // Open condition 1 for M15 (0-)
-INPUT int MFI15_OpenCondition2 = 0;                // Open condition 2 for M15 (0-)
-INPUT ENUM_MARKET_EVENT MFI15_CloseCondition = 1;  // Close condition for M15
+  // Constructor: Set default param values.
+  Stg_MFI_Params()
+      : MFI_Period(::MFI_Period),
+        MFI_Applied_Price(::MFI_Applied_Price),
+        MFI_Shift(::MFI_Shift),
+        MFI_TrailingStopMethod(::MFI_TrailingStopMethod),
+        MFI_TrailingProfitMethod(::MFI_TrailingProfitMethod),
+        MFI_SignalOpenLevel(::MFI_SignalOpenLevel),
+        MFI_SignalBaseMethod(::MFI_SignalBaseMethod),
+        MFI_SignalOpenMethod1(::MFI_SignalOpenMethod1),
+        MFI_SignalOpenMethod2(::MFI_SignalOpenMethod2),
+        MFI_SignalCloseLevel(::MFI_SignalCloseLevel),
+        MFI_SignalCloseMethod1(::MFI_SignalCloseMethod1),
+        MFI_SignalCloseMethod2(::MFI_SignalCloseMethod2),
+        MFI_MaxSpread(::MFI_MaxSpread) {}
+};
 
-INPUT int MFI30_OpenCondition1 = 777;              // Open condition 1 for M30 (0-)
-INPUT int MFI30_OpenCondition2 = 0;                // Open condition 2 for M30 (0-)
-INPUT ENUM_MARKET_EVENT MFI30_CloseCondition = 3;  // Close condition for M30
-
-INPUT double MFI1_MaxSpread = 6.0;    // Max spread to trade for M1 (pips)
-INPUT double MFI5_MaxSpread = 7.0;    // Max spread to trade for M5 (pips)
-INPUT double MFI15_MaxSpread = 8.0;   // Max spread to trade for M15 (pips)
-INPUT double MFI30_MaxSpread = 10.0;  // Max spread to trade for M30 (pips)
+// Loads pair specific param values.
+#include "sets/EURUSD_H1.h"
+#include "sets/EURUSD_H4.h"
+#include "sets/EURUSD_M1.h"
+#include "sets/EURUSD_M15.h"
+#include "sets/EURUSD_M30.h"
+#include "sets/EURUSD_M5.h"
 
 class Stg_MFI : public Strategy {
  public:
   Stg_MFI(StgParams &_params, string _name) : Strategy(_params, _name) {}
 
-  static Stg_MFI *Init_M1() {
-    ChartParams cparams1(PERIOD_M1);
-    IndicatorParams mfi_iparams(10, INDI_MFI);
-    MFI_Params mfi1_iparams(MFI_Period_M1);
-    StgParams mfi1_sparams(new Trade(PERIOD_M1, _Symbol), new Indi_MFI(mfi1_iparams, mfi_iparams, cparams1), NULL,
-                           NULL);
-    mfi1_sparams.SetSignals(MFI1_SignalMethod, MFI1_OpenCondition1, MFI1_OpenCondition2, MFI1_CloseCondition, NULL,
-                            MFI_SignalLevel, NULL);
-    mfi1_sparams.SetStops(MFI_TrailingProfitMethod, MFI_TrailingStopMethod);
-    mfi1_sparams.SetMaxSpread(MFI1_MaxSpread);
-    mfi1_sparams.SetId(MFI1);
-    return (new Stg_MFI(mfi1_sparams, "MFI1"));
-  }
-  static Stg_MFI *Init_M5() {
-    ChartParams cparams5(PERIOD_M5);
-    IndicatorParams mfi_iparams(10, INDI_MFI);
-    MFI_Params mfi5_iparams(MFI_Period_M5);
-    StgParams mfi5_sparams(new Trade(PERIOD_M5, _Symbol), new Indi_MFI(mfi5_iparams, mfi_iparams, cparams5), NULL,
-                           NULL);
-    mfi5_sparams.SetSignals(MFI5_SignalMethod, MFI5_OpenCondition1, MFI5_OpenCondition2, MFI5_CloseCondition, NULL,
-                            MFI_SignalLevel, NULL);
-    mfi5_sparams.SetStops(MFI_TrailingProfitMethod, MFI_TrailingStopMethod);
-    mfi5_sparams.SetMaxSpread(MFI5_MaxSpread);
-    mfi5_sparams.SetId(MFI5);
-    return (new Stg_MFI(mfi5_sparams, "MFI5"));
-  }
-  static Stg_MFI *Init_M15() {
-    ChartParams cparams15(PERIOD_M15);
-    IndicatorParams mfi_iparams(10, INDI_MFI);
-    MFI_Params mfi15_iparams(MFI_Period_M15);
-    StgParams mfi15_sparams(new Trade(PERIOD_M15, _Symbol), new Indi_MFI(mfi15_iparams, mfi_iparams, cparams15), NULL,
-                            NULL);
-    mfi15_sparams.SetSignals(MFI15_SignalMethod, MFI15_OpenCondition1, MFI15_OpenCondition2, MFI15_CloseCondition, NULL,
-                             MFI_SignalLevel, NULL);
-    mfi15_sparams.SetStops(MFI_TrailingProfitMethod, MFI_TrailingStopMethod);
-    mfi15_sparams.SetMaxSpread(MFI15_MaxSpread);
-    mfi15_sparams.SetId(MFI15);
-    return (new Stg_MFI(mfi15_sparams, "MFI15"));
-  }
-  static Stg_MFI *Init_M30() {
-    ChartParams cparams30(PERIOD_M30);
-    IndicatorParams mfi_iparams(10, INDI_MFI);
-    MFI_Params mfi30_iparams(MFI_Period_M30);
-    StgParams mfi30_sparams(new Trade(PERIOD_M30, _Symbol), new Indi_MFI(mfi30_iparams, mfi_iparams, cparams30), NULL,
-                            NULL);
-    mfi30_sparams.SetSignals(MFI30_SignalMethod, MFI30_OpenCondition1, MFI30_OpenCondition2, MFI30_CloseCondition, NULL,
-                             MFI_SignalLevel, NULL);
-    mfi30_sparams.SetStops(MFI_TrailingProfitMethod, MFI_TrailingStopMethod);
-    mfi30_sparams.SetMaxSpread(MFI30_MaxSpread);
-    mfi30_sparams.SetId(MFI30);
-    return (new Stg_MFI(mfi30_sparams, "MFI30"));
-  }
-  static Stg_MFI *Init(ENUM_TIMEFRAMES _tf) {
+  static Stg_MFI *Init(ENUM_TIMEFRAMES _tf = NULL, long _magic_no = NULL, ENUM_LOG_LEVEL _log_level = V_INFO) {
+    // Initialize strategy initial values.
+    Stg_MFI_Params _params;
     switch (_tf) {
-      case PERIOD_M1:
-        return Init_M1();
-      case PERIOD_M5:
-        return Init_M5();
-      case PERIOD_M15:
-        return Init_M15();
-      case PERIOD_M30:
-        return Init_M30();
-      default:
-        return NULL;
+      case PERIOD_M1: {
+        Stg_MFI_EURUSD_M1_Params _new_params;
+        _params = _new_params;
+      }
+      case PERIOD_M5: {
+        Stg_MFI_EURUSD_M5_Params _new_params;
+        _params = _new_params;
+      }
+      case PERIOD_M15: {
+        Stg_MFI_EURUSD_M15_Params _new_params;
+        _params = _new_params;
+      }
+      case PERIOD_M30: {
+        Stg_MFI_EURUSD_M30_Params _new_params;
+        _params = _new_params;
+      }
+      case PERIOD_H1: {
+        Stg_MFI_EURUSD_H1_Params _new_params;
+        _params = _new_params;
+      }
+      case PERIOD_H4: {
+        Stg_MFI_EURUSD_H4_Params _new_params;
+        _params = _new_params;
+      }
     }
+    // Initialize strategy parameters.
+    ChartParams cparams(_tf);
+    MFI_Params adx_params(_params.MFI_Period, _params.MFI_Applied_Price);
+    IndicatorParams adx_iparams(10, INDI_MFI);
+    StgParams sparams(new Trade(_tf, _Symbol), new Indi_MFI(adx_params, adx_iparams, cparams), NULL, NULL);
+    sparams.logger.SetLevel(_log_level);
+    sparams.SetMagicNo(_magic_no);
+    sparams.SetSignals(_params.MFI_SignalBaseMethod, _params.MFI_SignalOpenMethod1, _params.MFI_SignalOpenMethod2,
+                       _params.MFI_SignalCloseMethod1, _params.MFI_SignalCloseMethod2, _params.MFI_SignalOpenLevel,
+                       _params.MFI_SignalCloseLevel);
+    sparams.SetStops(_params.MFI_TrailingProfitMethod, _params.MFI_TrailingStopMethod);
+    sparams.SetMaxSpread(_params.MFI_MaxSpread);
+    // Initialize strategy instance.
+    Strategy *_strat = new Stg_MFI(sparams, "MFI");
+    return _strat;
   }
 
   /**
@@ -150,5 +148,13 @@ class Stg_MFI : public Strategy {
         break;
     }
     return _result;
+  }
+
+  /**
+   * Check strategy's closing signal.
+   */
+  bool SignalClose(ENUM_ORDER_TYPE _cmd, long _signal_method = EMPTY, double _signal_level = EMPTY) {
+    if (_signal_level == EMPTY) _signal_level = GetSignalCloseLevel();
+    return SignalOpen(Order::NegateOrderType(_cmd), _signal_method, _signal_level);
   }
 };
