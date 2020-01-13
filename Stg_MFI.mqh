@@ -28,9 +28,8 @@ INPUT double MFI_MaxSpread = 6.0;                               // Max spread to
 // Struct to define strategy parameters to override.
 struct Stg_MFI_Params : Stg_Params {
   unsigned int MFI_Period;
-  ENUM_APPLIED_PRICE MFI_Applied_Price;
   int MFI_Shift;
-  long MFI_SignalOpenMethod;
+  int MFI_SignalOpenMethod;
   double MFI_SignalOpenLevel;
   int MFI_SignalCloseMethod;
   double MFI_SignalCloseLevel;
@@ -41,7 +40,6 @@ struct Stg_MFI_Params : Stg_Params {
   // Constructor: Set default param values.
   Stg_MFI_Params()
       : MFI_Period(::MFI_Period),
-        MFI_Applied_Price(::MFI_Applied_Price),
         MFI_Shift(::MFI_Shift),
         MFI_SignalOpenMethod(::MFI_SignalOpenMethod),
         MFI_SignalOpenLevel(::MFI_SignalOpenLevel),
@@ -95,9 +93,9 @@ class Stg_MFI : public Strategy {
     }
     // Initialize strategy parameters.
     ChartParams cparams(_tf);
-    MFI_Params adx_params(_params.MFI_Period, _params.MFI_Applied_Price);
-    IndicatorParams adx_iparams(10, INDI_MFI);
-    StgParams sparams(new Trade(_tf, _Symbol), new Indi_MFI(adx_params, adx_iparams, cparams), NULL, NULL);
+    MFI_Params mfi_params(_params.MFI_Period);
+    IndicatorParams mfi_iparams(10, INDI_MFI);
+    StgParams sparams(new Trade(_tf, _Symbol), new Indi_MFI(mfi_params, mfi_iparams, cparams), NULL, NULL);
     sparams.logger.SetLevel(_log_level);
     sparams.SetMagicNo(_magic_no);
     sparams.SetSignals(_params.MFI_SignalOpenMethod, _params.MFI_SignalOpenLevel, _params.MFI_SignalCloseMethod,
@@ -109,31 +107,23 @@ class Stg_MFI : public Strategy {
   }
 
   /**
-   * Check if MFI indicator is on buy or sell.
-   *
-   * @param
-   *   _cmd (int) - type of trade order command
-   *   period (int) - period to check for
-   *   _method (int) - signal method to use by using bitwise AND operation
-   *   _level1 (double) - signal level to consider the signal
+   * Check strategy's opening signal.
    */
   bool SignalOpen(ENUM_ORDER_TYPE _cmd, int _method = 0, double _level = 0.0) {
     bool _result = false;
     double mfi_0 = ((Indi_MFI *)this.Data()).GetValue(0);
     double mfi_1 = ((Indi_MFI *)this.Data()).GetValue(1);
     double mfi_2 = ((Indi_MFI *)this.Data()).GetValue(2);
-    if (_level1 == EMPTY) _level1 = GetSignalLevel1();
-    if (_level2 == EMPTY) _level2 = GetSignalLevel2();
     switch (_cmd) {
       // Buy: Crossing 20 upwards.
       case ORDER_TYPE_BUY:
-        _result = mfi_1 > 0 && mfi_1 < (50 - _level1);
-        if (METHOD(_method, 0)) _result &= mfi_0 >= (50 - _level1);
+        _result = mfi_1 > 0 && mfi_1 < (50 - _level);
+        if (METHOD(_method, 0)) _result &= mfi_0 >= (50 - _level);
         break;
       // Sell: Crossing 80 downwards.
       case ORDER_TYPE_SELL:
-        _result = mfi_1 > 0 && mfi_1 > (50 + _level1);
-        if (METHOD(_method, 0)) _result &= mfi_0 <= (50 - _level1);
+        _result = mfi_1 > 0 && mfi_1 > (50 + _level);
+        if (METHOD(_method, 0)) _result &= mfi_0 <= (50 - _level);
         break;
     }
     return _result;

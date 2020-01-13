@@ -10,7 +10,6 @@ struct Stg_MFI_EURUSD_M15_Params : Stg_MFI_Params {
     symbol = "EURUSD";
     tf = PERIOD_M15;
     MFI_Period = 2;
-    MFI_Applied_Price = 3;
     MFI_Shift = 0;
     MFI_SignalOpenMethod = -63;
     MFI_SignalOpenLevel = 36;
