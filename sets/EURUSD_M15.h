@@ -12,15 +12,12 @@ struct Stg_MFI_EURUSD_M15_Params : Stg_MFI_Params {
     MFI_Period = 2;
     MFI_Applied_Price = 3;
     MFI_Shift = 0;
-    MFI_TrailingStopMethod = 6;
-    MFI_TrailingProfitMethod = 11;
+    MFI_SignalOpenMethod = -63;
     MFI_SignalOpenLevel = 36;
-    MFI_SignalBaseMethod = -63;
-    MFI_SignalOpenMethod1 = 389;
-    MFI_SignalOpenMethod2 = 0;
+    MFI_SignalCloseMethod = 1;
     MFI_SignalCloseLevel = 36;
-    MFI_SignalCloseMethod1 = 1;
-    MFI_SignalCloseMethod2 = 0;
+    MFI_PriceLimitMethod = 0;
+    MFI_PriceLimitLevel = 0;
     MFI_MaxSpread = 4;
   }
 };

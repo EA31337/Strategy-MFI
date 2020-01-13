@@ -15,32 +15,27 @@
 
 // User input params.
 INPUT string __MFI_Parameters__ = "-- MFI strategy params --";  // >>> MFI <<<
-INPUT int MFI_Active_Tf = 0;  // Activate timeframes (1-255, e.g. M1=1,M5=2,M15=4,M30=8,H1=16,H2=32...)
-INPUT ENUM_TRAIL_TYPE MFI_TrailingStopMethod = 7;     // Trail stop method
-INPUT ENUM_TRAIL_TYPE MFI_TrailingProfitMethod = 22;  // Trail profit method
-INPUT int MFI_Period = 2;                             // Period
-INPUT double MFI_SignalOpenLevel = 0.9;               // Signal open level
-INPUT int MFI_Shift = 0;                              // Shift (relative to the current bar, 0 - default)
-INPUT int MFI1_SignalBaseMethod = 0;                  // Signal base method (0-1)
-INPUT int MFI1_OpenCondition1 = 874;                  // Open condition 1 (0-1023)
-INPUT int MFI1_OpenCondition2 = 0;                    // Open condition 2 (0-)
-INPUT ENUM_MARKET_EVENT MFI1_CloseCondition = 14;     // Close condition for M1
-INPUT double MFI_MaxSpread = 6.0;                     // Max spread to trade (pips)
+INPUT int MFI_Period = 2;                                       // Period
+INPUT int MFI_Shift = 0;                                        // Shift (relative to the current bar, 0 - default)
+INPUT int MFI_SignalOpenMethod = 0;                             // Signal open method (0-1)
+INPUT double MFI_SignalOpenLevel = 0.9;                         // Signal open level
+INPUT int MFI_SignalCloseMethod = 0;                            // Signal close method (0-1)
+INPUT double MFI_SignalCloseLevel = 0.9;                        // Signal close level
+INPUT int MFI_PriceLimitMethod = 0;                             // Price limit method
+INPUT double MFI_PriceLimitLevel = 0;                           // Price limit level
+INPUT double MFI_MaxSpread = 6.0;                               // Max spread to trade (pips)
 
 // Struct to define strategy parameters to override.
 struct Stg_MFI_Params : Stg_Params {
   unsigned int MFI_Period;
   ENUM_APPLIED_PRICE MFI_Applied_Price;
   int MFI_Shift;
-  ENUM_TRAIL_TYPE MFI_TrailingStopMethod;
-  ENUM_TRAIL_TYPE MFI_TrailingProfitMethod;
+  long MFI_SignalOpenMethod;
   double MFI_SignalOpenLevel;
-  long MFI_SignalBaseMethod;
-  long MFI_SignalOpenMethod1;
-  long MFI_SignalOpenMethod2;
+  int MFI_SignalCloseMethod;
   double MFI_SignalCloseLevel;
-  ENUM_MARKET_EVENT MFI_SignalCloseMethod1;
-  ENUM_MARKET_EVENT MFI_SignalCloseMethod2;
+  int MFI_PriceLimitMethod;
+  double MFI_PriceLimitLevel;
   double MFI_MaxSpread;
 
   // Constructor: Set default param values.
@@ -48,15 +43,12 @@ struct Stg_MFI_Params : Stg_Params {
       : MFI_Period(::MFI_Period),
         MFI_Applied_Price(::MFI_Applied_Price),
         MFI_Shift(::MFI_Shift),
-        MFI_TrailingStopMethod(::MFI_TrailingStopMethod),
-        MFI_TrailingProfitMethod(::MFI_TrailingProfitMethod),
+        MFI_SignalOpenMethod(::MFI_SignalOpenMethod),
         MFI_SignalOpenLevel(::MFI_SignalOpenLevel),
-        MFI_SignalBaseMethod(::MFI_SignalBaseMethod),
-        MFI_SignalOpenMethod1(::MFI_SignalOpenMethod1),
-        MFI_SignalOpenMethod2(::MFI_SignalOpenMethod2),
+        MFI_SignalCloseMethod(::MFI_SignalCloseMethod),
         MFI_SignalCloseLevel(::MFI_SignalCloseLevel),
-        MFI_SignalCloseMethod1(::MFI_SignalCloseMethod1),
-        MFI_SignalCloseMethod2(::MFI_SignalCloseMethod2),
+        MFI_PriceLimitMethod(::MFI_PriceLimitMethod),
+        MFI_PriceLimitLevel(::MFI_PriceLimitLevel),
         MFI_MaxSpread(::MFI_MaxSpread) {}
 };
 
@@ -108,10 +100,8 @@ class Stg_MFI : public Strategy {
     StgParams sparams(new Trade(_tf, _Symbol), new Indi_MFI(adx_params, adx_iparams, cparams), NULL, NULL);
     sparams.logger.SetLevel(_log_level);
     sparams.SetMagicNo(_magic_no);
-    sparams.SetSignals(_params.MFI_SignalBaseMethod, _params.MFI_SignalOpenMethod1, _params.MFI_SignalOpenMethod2,
-                       _params.MFI_SignalCloseMethod1, _params.MFI_SignalCloseMethod2, _params.MFI_SignalOpenLevel,
+    sparams.SetSignals(_params.MFI_SignalOpenMethod, _params.MFI_SignalOpenLevel, _params.MFI_SignalCloseMethod,
                        _params.MFI_SignalCloseLevel);
-    sparams.SetStops(_params.MFI_TrailingProfitMethod, _params.MFI_TrailingStopMethod);
     sparams.SetMaxSpread(_params.MFI_MaxSpread);
     // Initialize strategy instance.
     Strategy *_strat = new Stg_MFI(sparams, "MFI");
@@ -124,27 +114,26 @@ class Stg_MFI : public Strategy {
    * @param
    *   _cmd (int) - type of trade order command
    *   period (int) - period to check for
-   *   _signal_method (int) - signal method to use by using bitwise AND operation
-   *   _signal_level1 (double) - signal level to consider the signal
+   *   _method (int) - signal method to use by using bitwise AND operation
+   *   _level1 (double) - signal level to consider the signal
    */
-  bool SignalOpen(ENUM_ORDER_TYPE _cmd, long _signal_method = EMPTY, double _signal_level = EMPTY) {
+  bool SignalOpen(ENUM_ORDER_TYPE _cmd, int _method = 0, double _level = 0.0) {
     bool _result = false;
     double mfi_0 = ((Indi_MFI *)this.Data()).GetValue(0);
     double mfi_1 = ((Indi_MFI *)this.Data()).GetValue(1);
     double mfi_2 = ((Indi_MFI *)this.Data()).GetValue(2);
-    if (_signal_method == EMPTY) _signal_method = GetSignalBaseMethod();
-    if (_signal_level1 == EMPTY) _signal_level1 = GetSignalLevel1();
-    if (_signal_level2 == EMPTY) _signal_level2 = GetSignalLevel2();
+    if (_level1 == EMPTY) _level1 = GetSignalLevel1();
+    if (_level2 == EMPTY) _level2 = GetSignalLevel2();
     switch (_cmd) {
       // Buy: Crossing 20 upwards.
       case ORDER_TYPE_BUY:
-        _result = mfi_1 > 0 && mfi_1 < (50 - _signal_level1);
-        if (METHOD(_signal_method, 0)) _result &= mfi_0 >= (50 - _signal_level1);
+        _result = mfi_1 > 0 && mfi_1 < (50 - _level1);
+        if (METHOD(_method, 0)) _result &= mfi_0 >= (50 - _level1);
         break;
       // Sell: Crossing 80 downwards.
       case ORDER_TYPE_SELL:
-        _result = mfi_1 > 0 && mfi_1 > (50 + _signal_level1);
-        if (METHOD(_signal_method, 0)) _result &= mfi_0 <= (50 - _signal_level1);
+        _result = mfi_1 > 0 && mfi_1 > (50 + _level1);
+        if (METHOD(_method, 0)) _result &= mfi_0 <= (50 - _level1);
         break;
     }
     return _result;
@@ -153,8 +142,23 @@ class Stg_MFI : public Strategy {
   /**
    * Check strategy's closing signal.
    */
-  bool SignalClose(ENUM_ORDER_TYPE _cmd, long _signal_method = EMPTY, double _signal_level = EMPTY) {
-    if (_signal_level == EMPTY) _signal_level = GetSignalCloseLevel();
-    return SignalOpen(Order::NegateOrderType(_cmd), _signal_method, _signal_level);
+  bool SignalClose(ENUM_ORDER_TYPE _cmd, int _method = 0, double _level = 0.0) {
+    return SignalOpen(Order::NegateOrderType(_cmd), _method, _level);
+  }
+
+  /**
+   * Gets price limit value for profit take or stop loss.
+   */
+  double PriceLimit(ENUM_ORDER_TYPE _cmd, ENUM_STG_PRICE_LIMIT_MODE _mode, int _method = 0, double _level = 0.0) {
+    double _trail = _level * Market().GetPipSize();
+    int _direction = Order::OrderDirection(_cmd) * (_mode == LIMIT_VALUE_STOP ? -1 : 1);
+    double _default_value = Market().GetCloseOffer(_cmd) + _trail * _method * _direction;
+    double _result = _default_value;
+    switch (_method) {
+      case 0: {
+        // @todo
+      }
+    }
+    return _result;
   }
 };
