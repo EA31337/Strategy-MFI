@@ -94,21 +94,27 @@ class Stg_MFI : public Strategy {
    * Check strategy's opening signal.
    */
   bool SignalOpen(ENUM_ORDER_TYPE _cmd, int _method = 0, double _level = 0.0) {
-    bool _result = false;
-    double mfi_0 = ((Indi_MFI *)this.Data()).GetValue(0);
-    double mfi_1 = ((Indi_MFI *)this.Data()).GetValue(1);
-    double mfi_2 = ((Indi_MFI *)this.Data()).GetValue(2);
-    switch (_cmd) {
-      // Buy: Crossing 20 upwards.
-      case ORDER_TYPE_BUY:
-        _result = mfi_1 > 0 && mfi_1 < (50 - _level);
-        if (METHOD(_method, 0)) _result &= mfi_0 >= (50 - _level);
-        break;
-      // Sell: Crossing 80 downwards.
-      case ORDER_TYPE_SELL:
-        _result = mfi_1 > 0 && mfi_1 > (50 + _level);
-        if (METHOD(_method, 0)) _result &= mfi_0 <= (50 - _level);
-        break;
+    Indicator *_indi = Data();
+    bool _is_valid = _indi[CURR].IsValid() && _indi[PREV].IsValid() && _indi[PPREV].IsValid();
+    bool _result = _is_valid;
+    double _level_pips = _level * Chart().GetPipSize();
+    if (_is_valid) {
+      switch (_cmd) {
+        // Buy: Crossing 20 upwards.
+        case ORDER_TYPE_BUY:
+          _result = _indi[PREV].value[0] < (50 - _level) || _indi[PPREV].value[0] < (50 - _level);
+          if (METHOD(_method, 0)) _result &= _indi[CURR].value[0] >= (50 - _level);
+          if (METHOD(_method, 1)) _result &= _indi[PPREV].value[0] >= (50 - _level);
+          // @todo: Add breakouts and positive/negative divergence signals.
+          break;
+        // Sell: Crossing 80 downwards.
+        case ORDER_TYPE_SELL:
+          _result = _indi[PREV].value[0] > (50 + _level) || _indi[PPREV].value[0] > (50 + _level);
+          if (METHOD(_method, 0)) _result &= _indi[CURR].value[0] <= (50 - _level);
+          if (METHOD(_method, 1)) _result &= _indi[PPREV].value[0] <= (50 - _level);
+          // @todo: Add breakouts and positive/negative divergence signals.
+          break;
+      }
     }
     return _result;
   }
@@ -157,13 +163,13 @@ class Stg_MFI : public Strategy {
    */
   double PriceLimit(ENUM_ORDER_TYPE _cmd, ENUM_ORDER_TYPE_VALUE _mode, int _method = 0, double _level = 0.0) {
     double _trail = _level * Market().GetPipSize();
-    int _direction = Order::OrderDirection(_cmd) * (_mode == ORDER_TYPE_SL ? -1 : 1);
+    int _direction = Order::OrderDirection(_cmd, _mode);
     double _default_value = Market().GetCloseOffer(_cmd) + _trail * _method * _direction;
     double _result = _default_value;
     switch (_method) {
-      case 0: {
-        // @todo
-      }
+      case 0:
+        // _indi.GetHighest()
+        break;
     }
     return _result;
   }
