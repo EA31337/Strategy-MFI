@@ -84,6 +84,7 @@ class Stg_MFI : public Strategy {
     sparams.SetSignals(_params.MFI_SignalOpenMethod, _params.MFI_SignalOpenLevel, _params.MFI_SignalCloseMethod,
                        _params.MFI_SignalOpenFilterMethod, _params.MFI_SignalOpenBoostMethod,
                        _params.MFI_SignalCloseLevel);
+    sparams.SetPriceLimits(_params.MFI_PriceLimitMethod, _params.MFI_PriceLimitLevel);
     sparams.SetMaxSpread(_params.MFI_MaxSpread);
     // Initialize strategy instance.
     Strategy *_strat = new Stg_MFI(sparams, "MFI");
