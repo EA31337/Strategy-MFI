@@ -79,7 +79,7 @@ class Stg_MFI : public Strategy {
     MFIParams mfi_params(_params.MFI_Period);
     mfi_params.SetTf(_tf);
     StgParams sparams(new Trade(_tf, _Symbol), new Indi_MFI(mfi_params), NULL, NULL);
-    sparams.logger.SetLevel(_log_level);
+    sparams.logger.Ptr().SetLevel(_log_level);
     sparams.SetMagicNo(_magic_no);
     sparams.SetSignals(_params.MFI_SignalOpenMethod, _params.MFI_SignalOpenLevel, _params.MFI_SignalCloseMethod,
                        _params.MFI_SignalOpenFilterMethod, _params.MFI_SignalOpenBoostMethod,
