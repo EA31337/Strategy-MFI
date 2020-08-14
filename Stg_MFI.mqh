@@ -1,31 +1,24 @@
-//+------------------------------------------------------------------+
-//|                  EA31337 - multi-strategy advanced trading robot |
-//|                       Copyright 2016-2020, 31337 Investments Ltd |
-//|                                       https://github.com/EA31337 |
-//+------------------------------------------------------------------+
-
 /**
  * @file
  * Implements MFI strategy based on the Money Flow Index indicator.
  */
 
+// User input params.
+INPUT int MFI_Period = 2;                  // Period
+INPUT int MFI_Shift = 0;                   // Shift (relative to the current bar, 0 - default)
+INPUT int MFI_SignalOpenMethod = 0;        // Signal open method (0-1)
+INPUT float MFI_SignalOpenLevel = 0.9;    // Signal open level
+INPUT int MFI_SignalOpenFilterMethod = 0;  // Signal open filter method
+INPUT int MFI_SignalOpenBoostMethod = 0;   // Signal open boost method
+INPUT int MFI_SignalCloseMethod = 0;       // Signal close method (0-1)
+INPUT float MFI_SignalCloseLevel = 0.9;   // Signal close level
+INPUT int MFI_PriceLimitMethod = 0;        // Price limit method
+INPUT float MFI_PriceLimitLevel = 0;      // Price limit level
+INPUT float MFI_MaxSpread = 6.0;          // Max spread to trade (pips)
+
 // Includes.
 #include <EA31337-classes/Indicators/Indi_MFI.mqh>
 #include <EA31337-classes/Strategy.mqh>
-
-// User input params.
-INPUT string __MFI_Parameters__ = "-- MFI strategy params --";  // >>> MFI <<<
-INPUT int MFI_Period = 2;                                       // Period
-INPUT int MFI_Shift = 0;                                        // Shift (relative to the current bar, 0 - default)
-INPUT int MFI_SignalOpenMethod = 0;                             // Signal open method (0-1)
-INPUT double MFI_SignalOpenLevel = 0.9;                         // Signal open level
-INPUT int MFI_SignalOpenFilterMethod = 0;                       // Signal open filter method
-INPUT int MFI_SignalOpenBoostMethod = 0;                        // Signal open boost method
-INPUT int MFI_SignalCloseMethod = 0;                            // Signal close method (0-1)
-INPUT double MFI_SignalCloseLevel = 0.9;                        // Signal close level
-INPUT int MFI_PriceLimitMethod = 0;                             // Price limit method
-INPUT double MFI_PriceLimitLevel = 0;                           // Price limit level
-INPUT double MFI_MaxSpread = 6.0;                               // Max spread to trade (pips)
 
 // Struct to define strategy parameters to override.
 struct Stg_MFI_Params : StgParams {
@@ -94,7 +87,7 @@ class Stg_MFI : public Strategy {
   /**
    * Check strategy's opening signal.
    */
-  bool SignalOpen(ENUM_ORDER_TYPE _cmd, int _method = 0, double _level = 0.0) {
+  bool SignalOpen(ENUM_ORDER_TYPE _cmd, int _method = 0, float _level = 0.0) {
     Indi_MFI *_indi = Data();
     bool _is_valid = _indi[CURR].IsValid() && _indi[PREV].IsValid() && _indi[PPREV].IsValid();
     bool _result = _is_valid;
@@ -121,48 +114,9 @@ class Stg_MFI : public Strategy {
   }
 
   /**
-   * Check strategy's opening signal additional filter.
-   */
-  bool SignalOpenFilter(ENUM_ORDER_TYPE _cmd, int _method = 0) {
-    bool _result = true;
-    if (_method != 0) {
-      // if (METHOD(_method, 0)) _result &= Trade().IsTrend(_cmd);
-      // if (METHOD(_method, 1)) _result &= Trade().IsPivot(_cmd);
-      // if (METHOD(_method, 2)) _result &= Trade().IsPeakHours(_cmd);
-      // if (METHOD(_method, 3)) _result &= Trade().IsRoundNumber(_cmd);
-      // if (METHOD(_method, 4)) _result &= Trade().IsHedging(_cmd);
-      // if (METHOD(_method, 5)) _result &= Trade().IsPeakBar(_cmd);
-    }
-    return _result;
-  }
-
-  /**
-   * Gets strategy's lot size boost (when enabled).
-   */
-  double SignalOpenBoost(ENUM_ORDER_TYPE _cmd, int _method = 0) {
-    bool _result = 1.0;
-    if (_method != 0) {
-      // if (METHOD(_method, 0)) if (Trade().IsTrend(_cmd)) _result *= 1.1;
-      // if (METHOD(_method, 1)) if (Trade().IsPivot(_cmd)) _result *= 1.1;
-      // if (METHOD(_method, 2)) if (Trade().IsPeakHours(_cmd)) _result *= 1.1;
-      // if (METHOD(_method, 3)) if (Trade().IsRoundNumber(_cmd)) _result *= 1.1;
-      // if (METHOD(_method, 4)) if (Trade().IsHedging(_cmd)) _result *= 1.1;
-      // if (METHOD(_method, 5)) if (Trade().IsPeakBar(_cmd)) _result *= 1.1;
-    }
-    return _result;
-  }
-
-  /**
-   * Check strategy's closing signal.
-   */
-  bool SignalClose(ENUM_ORDER_TYPE _cmd, int _method = 0, double _level = 0.0) {
-    return SignalOpen(Order::NegateOrderType(_cmd), _method, _level);
-  }
-
-  /**
    * Gets price limit value for profit take or stop loss.
    */
-  double PriceLimit(ENUM_ORDER_TYPE _cmd, ENUM_ORDER_TYPE_VALUE _mode, int _method = 0, double _level = 0.0) {
+  float PriceLimit(ENUM_ORDER_TYPE _cmd, ENUM_ORDER_TYPE_VALUE _mode, int _method = 0, float _level = 0.0) {
     Indi_MFI *_indi = Data();
     bool _is_valid = _indi[CURR].IsValid() && _indi[PREV].IsValid() && _indi[PPREV].IsValid();
     double _trail = _level * Market().GetPipSize();
@@ -172,13 +126,15 @@ class Stg_MFI : public Strategy {
     if (_is_valid) {
       switch (_method) {
         case 0: {
-          int _bar_count = (int) _level * (int) _indi.GetPeriod();
-          _result = _direction < 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest(_bar_count)) : _indi.GetPrice(PRICE_LOW, _indi.GetLowest(_bar_count));
+          int _bar_count = (int)_level * (int)_indi.GetPeriod();
+          _result = _direction < 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest(_bar_count))
+                                   : _indi.GetPrice(PRICE_LOW, _indi.GetLowest(_bar_count));
           break;
         }
         case 1: {
-          int _bar_count = (int) _level * (int) _indi.GetPeriod() * 2;
-          _result = _direction < 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest(_bar_count)) : _indi.GetPrice(PRICE_LOW, _indi.GetLowest(_bar_count));
+          int _bar_count = (int)_level * (int)_indi.GetPeriod() * 2;
+          _result = _direction < 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest(_bar_count))
+                                   : _indi.GetPrice(PRICE_LOW, _indi.GetLowest(_bar_count));
           break;
         }
       }
