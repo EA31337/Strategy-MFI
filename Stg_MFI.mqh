@@ -7,14 +7,14 @@
 INPUT int MFI_Period = 2;                  // Period
 INPUT int MFI_Shift = 0;                   // Shift (relative to the current bar, 0 - default)
 INPUT int MFI_SignalOpenMethod = 0;        // Signal open method (0-1)
-INPUT float MFI_SignalOpenLevel = 0.9;    // Signal open level
+INPUT float MFI_SignalOpenLevel = 0.9f;    // Signal open level
 INPUT int MFI_SignalOpenFilterMethod = 0;  // Signal open filter method
 INPUT int MFI_SignalOpenBoostMethod = 0;   // Signal open boost method
 INPUT int MFI_SignalCloseMethod = 0;       // Signal close method (0-1)
-INPUT float MFI_SignalCloseLevel = 0.9;   // Signal close level
+INPUT float MFI_SignalCloseLevel = 0.9f;   // Signal close level
 INPUT int MFI_PriceLimitMethod = 0;        // Price limit method
-INPUT float MFI_PriceLimitLevel = 0;      // Price limit level
-INPUT float MFI_MaxSpread = 6.0;          // Max spread to trade (pips)
+INPUT float MFI_PriceLimitLevel = 0;       // Price limit level
+INPUT float MFI_MaxSpread = 6.0;           // Max spread to trade (pips)
 
 // Includes.
 #include <EA31337-classes/Indicators/Indi_MFI.mqh>
@@ -25,14 +25,14 @@ struct Stg_MFI_Params : StgParams {
   unsigned int MFI_Period;
   int MFI_Shift;
   int MFI_SignalOpenMethod;
-  double MFI_SignalOpenLevel;
+  float MFI_SignalOpenLevel;
   int MFI_SignalOpenFilterMethod;
   int MFI_SignalOpenBoostMethod;
   int MFI_SignalCloseMethod;
-  double MFI_SignalCloseLevel;
+  float MFI_SignalCloseLevel;
   int MFI_PriceLimitMethod;
-  double MFI_PriceLimitLevel;
-  double MFI_MaxSpread;
+  float MFI_PriceLimitLevel;
+  float MFI_MaxSpread;
 
   // Constructor: Set default param values.
   Stg_MFI_Params()
@@ -140,6 +140,6 @@ class Stg_MFI : public Strategy {
       }
       _result += _trail * _direction;
     }
-    return _result;
+    return (float)_result;
   }
 };
