@@ -3,9 +3,12 @@
  * Implements MFI strategy based on the Money Flow Index indicator.
  */
 
+// Includes.
+#include <EA31337-classes/Indicators/Indi_MFI.mqh>
+#include <EA31337-classes/Strategy.mqh>
+
 // User input params.
-INPUT int MFI_Period = 2;                  // Period
-INPUT int MFI_Shift = 0;                   // Shift (relative to the current bar, 0 - default)
+INPUT float MFI_LotSize = 0;               // Lot size
 INPUT int MFI_SignalOpenMethod = 0;        // Signal open method (0-1)
 INPUT float MFI_SignalOpenLevel = 0.9f;    // Signal open level
 INPUT int MFI_SignalOpenFilterMethod = 0;  // Signal open filter method
@@ -14,44 +17,51 @@ INPUT int MFI_SignalCloseMethod = 0;       // Signal close method (0-1)
 INPUT float MFI_SignalCloseLevel = 0.9f;   // Signal close level
 INPUT int MFI_PriceLimitMethod = 0;        // Price limit method
 INPUT float MFI_PriceLimitLevel = 0;       // Price limit level
+INPUT int MFI_TickFilterMethod = 0;        // Tick filter method
 INPUT float MFI_MaxSpread = 6.0;           // Max spread to trade (pips)
+INPUT int MFI_Shift = 0;                   // Shift (relative to the current bar, 0 - default)
+INPUT string __MFI_Indi_MFI_Parameters__ =
+    "-- MFI strategy: MFI indicator params --";  // >>> MFI strategy: MFI indicator <<<
+INPUT int Indi_MFI_Period = 2;                   // Period
 
-// Includes.
-#include <EA31337-classes/Indicators/Indi_MFI.mqh>
-#include <EA31337-classes/Strategy.mqh>
+// Structs.
+
+// Defines struct with default user indicator values.
+struct Indi_MFI_Params_Defaults : MFIParams {
+  Indi_MFI_Params_Defaults() : MFIParams(::Indi_MFI_Period) {}
+} indi_mfi_defaults;
+
+// Defines struct to store indicator parameter values.
+struct Indi_MFI_Params : public MFIParams {
+  // Struct constructors.
+  void Indi_MFI_Params(MFIParams &_params, ENUM_TIMEFRAMES _tf) : MFIParams(_params, _tf) {}
+};
+
+// Defines struct with default user strategy values.
+struct Stg_MFI_Params_Defaults : StgParams {
+  Stg_MFI_Params_Defaults()
+      : StgParams(::MFI_SignalOpenMethod, ::MFI_SignalOpenFilterMethod, ::MFI_SignalOpenLevel,
+                  ::MFI_SignalOpenBoostMethod, ::MFI_SignalCloseMethod, ::MFI_SignalCloseLevel, ::MFI_PriceLimitMethod,
+                  ::MFI_PriceLimitLevel, ::MFI_TickFilterMethod, ::MFI_MaxSpread, ::MFI_Shift) {}
+} stg_mfi_defaults;
 
 // Struct to define strategy parameters to override.
 struct Stg_MFI_Params : StgParams {
-  unsigned int MFI_Period;
-  int MFI_Shift;
-  int MFI_SignalOpenMethod;
-  float MFI_SignalOpenLevel;
-  int MFI_SignalOpenFilterMethod;
-  int MFI_SignalOpenBoostMethod;
-  int MFI_SignalCloseMethod;
-  float MFI_SignalCloseLevel;
-  int MFI_PriceLimitMethod;
-  float MFI_PriceLimitLevel;
-  float MFI_MaxSpread;
+  Indi_MFI_Params iparams;
+  StgParams sparams;
 
-  // Constructor: Set default param values.
-  Stg_MFI_Params()
-      : MFI_Period(::MFI_Period),
-        MFI_Shift(::MFI_Shift),
-        MFI_SignalOpenMethod(::MFI_SignalOpenMethod),
-        MFI_SignalOpenLevel(::MFI_SignalOpenLevel),
-        MFI_SignalOpenFilterMethod(::MFI_SignalOpenFilterMethod),
-        MFI_SignalOpenBoostMethod(::MFI_SignalOpenBoostMethod),
-        MFI_SignalCloseMethod(::MFI_SignalCloseMethod),
-        MFI_SignalCloseLevel(::MFI_SignalCloseLevel),
-        MFI_PriceLimitMethod(::MFI_PriceLimitMethod),
-        MFI_PriceLimitLevel(::MFI_PriceLimitLevel),
-        MFI_MaxSpread(::MFI_MaxSpread) {}
+  // Struct constructors.
+  Stg_MFI_Params(Indi_MFI_Params &_iparams, StgParams &_sparams)
+      : iparams(indi_mfi_defaults, _iparams.tf), sparams(stg_mfi_defaults) {
+    iparams = _iparams;
+    sparams = _sparams;
+  }
 };
 
 // Loads pair specific param values.
 #include "sets/EURUSD_H1.h"
 #include "sets/EURUSD_H4.h"
+#include "sets/EURUSD_H8.h"
 #include "sets/EURUSD_M1.h"
 #include "sets/EURUSD_M15.h"
 #include "sets/EURUSD_M30.h"
@@ -63,24 +73,24 @@ class Stg_MFI : public Strategy {
 
   static Stg_MFI *Init(ENUM_TIMEFRAMES _tf = NULL, long _magic_no = NULL, ENUM_LOG_LEVEL _log_level = V_INFO) {
     // Initialize strategy initial values.
-    Stg_MFI_Params _params;
+    Indi_MFI_Params _indi_params(indi_mfi_defaults, _tf);
+    StgParams _stg_params(stg_mfi_defaults);
     if (!Terminal::IsOptimization()) {
-      SetParamsByTf<Stg_MFI_Params>(_params, _tf, stg_mfi_m1, stg_mfi_m5, stg_mfi_m15, stg_mfi_m30, stg_mfi_h1,
-                                    stg_mfi_h4, stg_mfi_h4);
+      SetParamsByTf<Indi_MFI_Params>(_indi_params, _tf, indi_mfi_m1, indi_mfi_m5, indi_mfi_m15, indi_mfi_m30,
+                                     indi_mfi_h1, indi_mfi_h4, indi_mfi_h8);
+      SetParamsByTf<StgParams>(_stg_params, _tf, stg_mfi_m1, stg_mfi_m5, stg_mfi_m15, stg_mfi_m30, stg_mfi_h1,
+                               stg_mfi_h4, stg_mfi_h8);
     }
+    // Initialize indicator.
+    MFIParams mfi_params(_indi_params);
+    _stg_params.SetIndicator(new Indi_MFI(_indi_params));
     // Initialize strategy parameters.
-    MFIParams mfi_params(_params.MFI_Period);
-    mfi_params.SetTf(_tf);
-    StgParams sparams(new Trade(_tf, _Symbol), new Indi_MFI(mfi_params), NULL, NULL);
-    sparams.logger.Ptr().SetLevel(_log_level);
-    sparams.SetMagicNo(_magic_no);
-    sparams.SetSignals(_params.MFI_SignalOpenMethod, _params.MFI_SignalOpenLevel, _params.MFI_SignalCloseMethod,
-                       _params.MFI_SignalOpenFilterMethod, _params.MFI_SignalOpenBoostMethod,
-                       _params.MFI_SignalCloseLevel);
-    sparams.SetPriceLimits(_params.MFI_PriceLimitMethod, _params.MFI_PriceLimitLevel);
-    sparams.SetMaxSpread(_params.MFI_MaxSpread);
+    _stg_params.GetLog().SetLevel(_log_level);
+    _stg_params.SetMagicNo(_magic_no);
+    _stg_params.SetTf(_tf, _Symbol);
     // Initialize strategy instance.
-    Strategy *_strat = new Stg_MFI(sparams, "MFI");
+    Strategy *_strat = new Stg_MFI(_stg_params, "MFI");
+    _stg_params.SetStops(_strat, _strat);
     return _strat;
   }
 

@@ -1,20 +1,27 @@
-//+------------------------------------------------------------------+
-//|                  EA31337 - multi-strategy advanced trading robot |
-//|                       Copyright 2016-2020, 31337 Investments Ltd |
-//|                                       https://github.com/EA31337 |
-//+------------------------------------------------------------------+
+/*
+ * @file
+ * Defines default strategy parameter values for the given timeframe.
+ */
+
+// Defines indicator's parameter values for the given pair symbol and timeframe.
+struct Indi_MFI_Params_H4 : Indi_MFI_Params {
+  Indi_MFI_Params_H4() : Indi_MFI_Params(indi_mfi_defaults, PERIOD_H4) { shift = 0; }
+} indi_mfi_h4;
 
 // Defines strategy's parameter values for the given pair symbol and timeframe.
-struct Stg_MFI_EURUSD_H4_Params : Stg_MFI_Params {
-  Stg_MFI_EURUSD_H4_Params() {
-    MFI_Period = 2;
-    MFI_Shift = 0;
-    MFI_SignalOpenMethod = 0;
-    MFI_SignalOpenLevel = 36;
-    MFI_SignalCloseMethod = 1;
-    MFI_SignalCloseLevel = 36;
-    MFI_PriceLimitMethod = 0;
-    MFI_PriceLimitLevel = 0;
-    MFI_MaxSpread = 10;
+struct Stg_MFI_Params_H4 : StgParams {
+  // Struct constructor.
+  Stg_MFI_Params_H4() : StgParams(stg_mfi_defaults) {
+    lot_size = 0;
+    signal_open_method = 0;
+    signal_open_filter = 1;
+    signal_open_level = 0;
+    signal_open_boost = 0;
+    signal_close_method = 0;
+    signal_close_level = 0;
+    price_limit_method = 0;
+    price_limit_level = 2;
+    tick_filter_method = 1;
+    max_spread = 0;
   }
 } stg_mfi_h4;
