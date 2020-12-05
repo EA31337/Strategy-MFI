@@ -106,16 +106,16 @@ class Stg_MFI : public Strategy {
       switch (_cmd) {
         // Buy: Crossing 20 upwards.
         case ORDER_TYPE_BUY:
-          _result = _indi[PREV].value[0] < (50 - _level) || _indi[PPREV].value[0] < (50 - _level);
-          if (METHOD(_method, 0)) _result &= _indi[CURR].value[0] >= (50 - _level);
-          if (METHOD(_method, 1)) _result &= _indi[PPREV].value[0] >= (50 - _level);
+          _result = _indi[PREV][0] < (50 - _level) || _indi[PPREV][0] < (50 - _level);
+          if (METHOD(_method, 0)) _result &= _indi[CURR][0] >= (50 - _level);
+          if (METHOD(_method, 1)) _result &= _indi[PPREV][0] >= (50 - _level);
           // @todo: Add breakouts and positive/negative divergence signals.
           break;
         // Sell: Crossing 80 downwards.
         case ORDER_TYPE_SELL:
-          _result = _indi[PREV].value[0] > (50 + _level) || _indi[PPREV].value[0] > (50 + _level);
-          if (METHOD(_method, 0)) _result &= _indi[CURR].value[0] <= (50 - _level);
-          if (METHOD(_method, 1)) _result &= _indi[PPREV].value[0] <= (50 - _level);
+          _result = _indi[PREV][0] > (50 + _level) || _indi[PPREV][0] > (50 + _level);
+          if (METHOD(_method, 0)) _result &= _indi[CURR][0] <= (50 - _level);
+          if (METHOD(_method, 1)) _result &= _indi[PPREV][0] <= (50 - _level);
           // @todo: Add breakouts and positive/negative divergence signals.
           break;
       }
