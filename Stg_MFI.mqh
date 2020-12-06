@@ -3,10 +3,6 @@
  * Implements MFI strategy based on the Money Flow Index indicator.
  */
 
-// Includes.
-#include <EA31337-classes/Indicators/Indi_MFI.mqh>
-#include <EA31337-classes/Strategy.mqh>
-
 // User input params.
 INPUT float MFI_LotSize = 0;               // Lot size
 INPUT int MFI_SignalOpenMethod = 0;        // Signal open method (0-1)
