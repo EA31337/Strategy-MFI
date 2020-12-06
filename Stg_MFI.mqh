@@ -137,14 +137,14 @@ class Stg_MFI : public Strategy {
       switch (_method) {
         case 1: {
           int _bar_count0 = (int)_level * (int)_indi.GetPeriod();
-          _result = _direction < 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest(_bar_count0))
-                                   : _indi.GetPrice(PRICE_LOW, _indi.GetLowest(_bar_count0));
+          _result = _direction < 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest<double>(_bar_count0))
+                                   : _indi.GetPrice(PRICE_LOW, _indi.GetLowest<double>(_bar_count0));
           break;
         }
         case 2: {
           int _bar_count1 = (int)_level * (int)_indi.GetPeriod() * 2;
-          _result = _direction < 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest(_bar_count1))
-                                   : _indi.GetPrice(PRICE_LOW, _indi.GetLowest(_bar_count1));
+          _result = _direction < 0 ? _indi.GetPrice(PRICE_HIGH, _indi.GetHighest<double>(_bar_count1))
+                                   : _indi.GetPrice(PRICE_LOW, _indi.GetLowest<double>(_bar_count1));
           break;
         }
       }
