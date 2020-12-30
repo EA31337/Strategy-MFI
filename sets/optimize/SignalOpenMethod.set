@@ -1,0 +1,7 @@
+; Optimize signal open method param.
+MFI_SignalOpenFilterMethod=1
+MFI_SignalOpenMethod,1=-4
+MFI_SignalOpenMethod,2=1
+MFI_SignalOpenMethod,3=4
+MFI_SignalOpenMethod,F=1
+MFI_TickFilterMethod=1

@@ -1,0 +1,7 @@
+; Optimize signal open level param.
+MFI_SignalOpenFilterMethod=1
+MFI_SignalOpenLevel,1=0
+MFI_SignalOpenLevel,2=1
+MFI_SignalOpenLevel,3=10
+MFI_SignalOpenLevel,F=1
+MFI_TickFilterMethod=1

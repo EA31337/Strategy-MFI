@@ -1,0 +1,7 @@
+; Optimize signal open boost method param.
+MFI_SignalOpenBoostMethod,1=1
+MFI_SignalOpenBoostMethod,2=1
+MFI_SignalOpenBoostMethod,3=8
+MFI_SignalOpenBoostMethod,F=1
+MFI_SignalOpenFilterMethod=1
+MFI_TickFilterMethod=1

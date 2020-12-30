@@ -1,0 +1,7 @@
+; Optimize signal close method param.
+MFI_SignalCloseMethod,1=-4
+MFI_SignalCloseMethod,2=1
+MFI_SignalCloseMethod,3=4
+MFI_SignalCloseMethod,F=1
+MFI_SignalOpenFilterMethod=1
+MFI_TickFilterMethod=1

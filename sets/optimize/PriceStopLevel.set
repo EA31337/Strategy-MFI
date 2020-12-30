@@ -1,0 +1,7 @@
+; Optimize price stop level param.
+MFI_PriceStopLevel,1=10
+MFI_PriceStopLevel,2=5
+MFI_PriceStopLevel,3=40
+MFI_PriceStopLevel,F=1
+MFI_SignalOpenFilterMethod=1
+MFI_TickFilterMethod=1

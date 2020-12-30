@@ -1,0 +1,8 @@
+; Optimize price stop method param.
+MFI_PriceStopMethod,1=0
+MFI_PriceStopMethod,2=1
+MFI_PriceStopMethod,3=4
+MFI_PriceStopMethod,F=1
+MFI_OrderCloseTime=-20
+MFI_SignalOpenFilterMethod=1
+MFI_TickFilterMethod=1

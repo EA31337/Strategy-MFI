@@ -1,0 +1,7 @@
+; Optimize max spread param.
+MFI_MaxSpread,1=10
+MFI_MaxSpread,2=10
+MFI_MaxSpread,3=40
+MFI_MaxSpread,F=1
+MFI_SignalOpenFilterMethod=1
+MFI_TickFilterMethod=1
