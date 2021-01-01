@@ -6,17 +6,17 @@
 // User input params.
 INPUT float MFI_LotSize = 0;               // Lot size
 INPUT int MFI_SignalOpenMethod = 0;        // Signal open method (0-1)
-INPUT float MFI_SignalOpenLevel = 0.9f;    // Signal open level
-INPUT int MFI_SignalOpenFilterMethod = 0;  // Signal open filter method
+INPUT float MFI_SignalOpenLevel = 0.0f;    // Signal open level
+INPUT int MFI_SignalOpenFilterMethod = 1;  // Signal open filter method
 INPUT int MFI_SignalOpenBoostMethod = 0;   // Signal open boost method
 INPUT int MFI_SignalCloseMethod = 0;       // Signal close method (0-1)
-INPUT float MFI_SignalCloseLevel = 0.9f;   // Signal close level
+INPUT float MFI_SignalCloseLevel = 0.0f;   // Signal close level
 INPUT int MFI_PriceStopMethod = 0;         // Price stop method
 INPUT float MFI_PriceStopLevel = 0;        // Price stop level
-INPUT int MFI_TickFilterMethod = 0;        // Tick filter method
-INPUT float MFI_MaxSpread = 6.0;           // Max spread to trade (pips)
+INPUT int MFI_TickFilterMethod = 1;        // Tick filter method
+INPUT float MFI_MaxSpread = 4.0;           // Max spread to trade (pips)
 INPUT int MFI_Shift = 0;                   // Shift (relative to the current bar, 0 - default)
-INPUT int MFI_OrderCloseTime = -10;        // Order close time in mins (>0) or bars (<0)
+INPUT int MFI_OrderCloseTime = -20;        // Order close time in mins (>0) or bars (<0)
 INPUT string __MFI_Indi_MFI_Parameters__ =
     "-- MFI strategy: MFI indicator params --";  // >>> MFI strategy: MFI indicator <<<
 INPUT int Indi_MFI_Period = 2;                   // Period
