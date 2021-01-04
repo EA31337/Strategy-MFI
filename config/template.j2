@@ -20,10 +20,10 @@ struct Stg_MFI_Params_{{ Timeframe }} : StgParams {
     lot_size = {{ MFI_LotSize | default(0) }};
     signal_open_method = {{ MFI_SignalOpenMethod | default(0) }};
     signal_open_filter = {{ MFI_SignalOpenFilterMethod | default(1) }};
-    signal_open_level = {{ MFI_SignalOpenLevel | default(0) }};
+    signal_open_level = (float){{ MFI_SignalOpenLevel | default(0) }};
     signal_open_boost = {{ MFI_SignalOpenBoostMethod | default(0) }};
     signal_close_method = {{ MFI_SignalCloseMethod | default(0) }};
-    signal_close_level = {{ MFI_SignalCloseLevel | default(0) }};
+    signal_close_level = (float){{ MFI_SignalCloseLevel | default(0) }};
     price_stop_method = {{ MFI_PriceStopMethod | default(0) }};
     price_stop_level = {{ MFI_SignalCloseLevel | default(1) }};
     tick_filter_method = {{ MFI_TickFilterMethod  | default(1) }};
