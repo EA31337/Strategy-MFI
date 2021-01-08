@@ -25,7 +25,7 @@ struct Stg_MFI_Params_{{ Timeframe }} : StgParams {
     signal_close_method = {{ MFI_SignalCloseMethod | default(0) }};
     signal_close_level = (float){{ MFI_SignalCloseLevel | default(0) }};
     price_stop_method = {{ MFI_PriceStopMethod | default(0) }};
-    price_stop_level = {{ MFI_SignalCloseLevel | default(1) }};
+    price_stop_level = (float){{ MFI_SignalCloseLevel | default(1) }};
     tick_filter_method = {{ MFI_TickFilterMethod  | default(1) }};
     max_spread = {{ MFI_MaxSpread | default(0) }};
   }
