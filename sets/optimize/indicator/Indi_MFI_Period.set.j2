@@ -1,8 +1,6 @@
-MFI_Indi_MFI_Applied_Price={{ applied_price | replace("(ENUM_APPLIED_PRICE)", "") | int | default(0) }}
-MFI_Indi_MFI_MA_Method={{ ma_method | default(0) }}
-MFI_Indi_MFI_Period,1=4
+MFI_Indi_MFI_Period,1={{ (period | default(0) | int) - 10 }}
 MFI_Indi_MFI_Period,2=4
-MFI_Indi_MFI_Period,3=24
+MFI_Indi_MFI_Period,3={{ (period | default(0) | int) + 10 }}
 MFI_Indi_MFI_Period,F=1
 MFI_Indi_MFI_Period={{ (period | default(0) | int) }}
 MFI_Indi_MFI_Shift={{ shift | default(0) }}

@@ -4,12 +4,10 @@
  */
 
 // Defines indicator's parameter values for the given pair symbol and timeframe.
-struct Indi_MFI_Params_{{ Timeframe }} : Indi_MFI_Params {
-  Indi_MFI_Params_{{ Timeframe }}() : Indi_MFI_Params(indi_mfi_defaults, PERIOD_{{ Timeframe }}) {
-    applied_price = (ENUM_APPLIED_PRICE){{ MFI_Indi_MFI_Applied_Price | default(0) }};
-    ma_method = {{ MFI_Indi_MFI_MA_Method | default(0) }};
+struct Indi_MFI_Params_{{ Timeframe }} : MFIParams {
+  Indi_MFI_Params_{{ Timeframe }}() : MFIParams(indi_mfi_defaults, PERIOD_{{ Timeframe }}) {
     period = {{ MFI_Indi_MFI_Period | default(0) }};
-    shift = {{ MFI_Shift | default(0) }};
+    shift = {{ MFI_Indi_MFI_Shift | default(0) }};
   }
 } indi_mfi_{{ Timeframe | lower }};
 

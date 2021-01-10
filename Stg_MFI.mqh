@@ -19,20 +19,15 @@ INPUT int MFI_Shift = 0;                   // Shift (relative to the current bar
 INPUT int MFI_OrderCloseTime = -20;        // Order close time in mins (>0) or bars (<0)
 INPUT string __MFI_Indi_MFI_Parameters__ =
     "-- MFI strategy: MFI indicator params --";  // >>> MFI strategy: MFI indicator <<<
-INPUT int Indi_MFI_Period = 2;                   // Period
+INPUT int MFI_Indi_MFI_Period = 12;              // Period
+INPUT int MFI_Indi_MFI_Shift = 0;                // Shift
 
 // Structs.
 
 // Defines struct with default user indicator values.
 struct Indi_MFI_Params_Defaults : MFIParams {
-  Indi_MFI_Params_Defaults() : MFIParams(::Indi_MFI_Period) {}
+  Indi_MFI_Params_Defaults() : MFIParams(::MFI_Indi_MFI_Period, ::MFI_Indi_MFI_Shift) {}
 } indi_mfi_defaults;
-
-// Defines struct to store indicator parameter values.
-struct Indi_MFI_Params : public MFIParams {
-  // Struct constructors.
-  void Indi_MFI_Params(MFIParams &_params, ENUM_TIMEFRAMES _tf) : MFIParams(_params, _tf) {}
-};
 
 // Defines struct with default user strategy values.
 struct Stg_MFI_Params_Defaults : StgParams {
