@@ -6,6 +6,7 @@
 // Defines indicator's parameter values for the given pair symbol and timeframe.
 struct Indi_MFI_Params_{{ Timeframe }} : MFIParams {
   Indi_MFI_Params_{{ Timeframe }}() : MFIParams(indi_mfi_defaults, PERIOD_{{ Timeframe }}) {
+    applied_volume = {{ MFI_Indi_MFI_Applied_Volume | default(0) }}
     period = {{ MFI_Indi_MFI_Period | default(0) }};
     shift = {{ MFI_Indi_MFI_Shift | default(0) }};
   }

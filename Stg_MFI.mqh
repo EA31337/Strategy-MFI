@@ -18,15 +18,16 @@ INPUT float MFI_MaxSpread = 4.0;           // Max spread to trade (pips)
 INPUT int MFI_Shift = 0;                   // Shift (relative to the current bar, 0 - default)
 INPUT int MFI_OrderCloseTime = -20;        // Order close time in mins (>0) or bars (<0)
 INPUT string __MFI_Indi_MFI_Parameters__ =
-    "-- MFI strategy: MFI indicator params --";  // >>> MFI strategy: MFI indicator <<<
-INPUT int MFI_Indi_MFI_Period = 12;              // Period
-INPUT int MFI_Indi_MFI_Shift = 0;                // Shift
+    "-- MFI strategy: MFI indicator params --";                                  // >>> MFI strategy: MFI indicator <<<
+INPUT int MFI_Indi_MFI_Period = 12;                                              // Period
+INPUT ENUM_APPLIED_VOLUME MFI_Indi_MFI_Applied_Volume = (ENUM_APPLIED_VOLUME)0;  // Applied volume.
+INPUT int MFI_Indi_MFI_Shift = 0;                                                // Shift
 
 // Structs.
 
 // Defines struct with default user indicator values.
 struct Indi_MFI_Params_Defaults : MFIParams {
-  Indi_MFI_Params_Defaults() : MFIParams(::MFI_Indi_MFI_Period, ::MFI_Indi_MFI_Shift) {}
+  Indi_MFI_Params_Defaults() : MFIParams(::MFI_Indi_MFI_Period, ::MFI_Indi_MFI_Applied_Volume, ::MFI_Indi_MFI_Shift) {}
 } indi_mfi_defaults;
 
 // Defines struct with default user strategy values.
