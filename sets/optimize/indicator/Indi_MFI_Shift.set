@@ -1,0 +1,7 @@
+; Optimize indicator's shift param.
+MFI_Indi_MFI_Shift,1=0
+MFI_Indi_MFI_Shift,2=1
+MFI_Indi_MFI_Shift,3=4
+MFI_Indi_MFI_Shift,F=1
+MFI_SignalOpenFilterMethod=1
+MFI_TickFilterMethod=1
