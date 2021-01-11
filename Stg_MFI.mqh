@@ -39,11 +39,11 @@ struct Stg_MFI_Params_Defaults : StgParams {
 
 // Struct to define strategy parameters to override.
 struct Stg_MFI_Params : StgParams {
-  Indi_MFI_Params iparams;
+  MFIParams iparams;
   StgParams sparams;
 
   // Struct constructors.
-  Stg_MFI_Params(Indi_MFI_Params &_iparams, StgParams &_sparams)
+  Stg_MFI_Params(MFIParams &_iparams, StgParams &_sparams)
       : iparams(indi_mfi_defaults, _iparams.tf), sparams(stg_mfi_defaults) {
     iparams = _iparams;
     sparams = _sparams;
@@ -65,11 +65,11 @@ class Stg_MFI : public Strategy {
 
   static Stg_MFI *Init(ENUM_TIMEFRAMES _tf = NULL, long _magic_no = NULL, ENUM_LOG_LEVEL _log_level = V_INFO) {
     // Initialize strategy initial values.
-    Indi_MFI_Params _indi_params(indi_mfi_defaults, _tf);
+    MFIParams _indi_params(indi_mfi_defaults, _tf);
     StgParams _stg_params(stg_mfi_defaults);
     if (!Terminal::IsOptimization()) {
-      SetParamsByTf<Indi_MFI_Params>(_indi_params, _tf, indi_mfi_m1, indi_mfi_m5, indi_mfi_m15, indi_mfi_m30,
-                                     indi_mfi_h1, indi_mfi_h4, indi_mfi_h8);
+      SetParamsByTf<MFIParams>(_indi_params, _tf, indi_mfi_m1, indi_mfi_m5, indi_mfi_m15, indi_mfi_m30, indi_mfi_h1,
+                               indi_mfi_h4, indi_mfi_h8);
       SetParamsByTf<StgParams>(_stg_params, _tf, stg_mfi_m1, stg_mfi_m5, stg_mfi_m15, stg_mfi_m30, stg_mfi_h1,
                                stg_mfi_h4, stg_mfi_h8);
     }
