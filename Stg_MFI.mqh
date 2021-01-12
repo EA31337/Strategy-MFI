@@ -5,12 +5,12 @@
 
 // User input params.
 INPUT float MFI_LotSize = 0;               // Lot size
-INPUT int MFI_SignalOpenMethod = 0;        // Signal open method (0-1)
-INPUT float MFI_SignalOpenLevel = 0.0f;    // Signal open level
+INPUT int MFI_SignalOpenMethod = 0;        // Signal open method (-7-7)
+INPUT float MFI_SignalOpenLevel = 20;      // Signal open level (-49-49)
 INPUT int MFI_SignalOpenFilterMethod = 1;  // Signal open filter method
 INPUT int MFI_SignalOpenBoostMethod = 0;   // Signal open boost method
-INPUT int MFI_SignalCloseMethod = 0;       // Signal close method (0-1)
-INPUT float MFI_SignalCloseLevel = 0.0f;   // Signal close level
+INPUT int MFI_SignalCloseMethod = 0;       // Signal close method (-7-7)
+INPUT float MFI_SignalCloseLevel = 20;     // Signal close level (-49-49)
 INPUT int MFI_PriceStopMethod = 0;         // Price stop method
 INPUT float MFI_PriceStopLevel = 0;        // Price stop level
 INPUT int MFI_TickFilterMethod = 1;        // Tick filter method
@@ -99,16 +99,20 @@ class Stg_MFI : public Strategy {
       switch (_cmd) {
         // Buy: Crossing 20 upwards.
         case ORDER_TYPE_BUY:
-          _result = _indi[PREV][0] < (50 - _level) || _indi[PPREV][0] < (50 - _level);
+          _result &= _indi[PREV][0] < (50 - _level) || _indi[PPREV][0] < (50 - _level);
+          _result &= _indi.IsIncreasing(2);
           if (METHOD(_method, 0)) _result &= _indi[CURR][0] >= (50 - _level);
           if (METHOD(_method, 1)) _result &= _indi[PPREV][0] >= (50 - _level);
+          if (METHOD(_method, 2)) _result &= _indi.IsIncreasing(3);
           // @todo: Add breakouts and positive/negative divergence signals.
           break;
         // Sell: Crossing 80 downwards.
         case ORDER_TYPE_SELL:
-          _result = _indi[PREV][0] > (50 + _level) || _indi[PPREV][0] > (50 + _level);
+          _result &= _indi[PREV][0] > (50 + _level) || _indi[PPREV][0] > (50 + _level);
+          _result &= _indi.IsDecreasing(2);
           if (METHOD(_method, 0)) _result &= _indi[CURR][0] <= (50 - _level);
           if (METHOD(_method, 1)) _result &= _indi[PPREV][0] <= (50 - _level);
+          if (METHOD(_method, 2)) _result &= _indi.IsDecreasing(3);
           // @todo: Add breakouts and positive/negative divergence signals.
           break;
       }
