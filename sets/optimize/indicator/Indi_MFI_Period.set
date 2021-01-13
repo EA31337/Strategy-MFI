@@ -1,7 +1,0 @@
-; Optimize strategy indicator's MFI period param.
-MFI_Indi_MFI_Period,1=4
-MFI_Indi_MFI_Period,2=4
-MFI_Indi_MFI_Period,3=24
-MFI_Indi_MFI_Period,F=1
-MFI_SignalOpenFilterMethod=1
-MFI_TickFilterMethod=1

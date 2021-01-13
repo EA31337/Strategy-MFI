@@ -1,0 +1,11 @@
+MFI_Indi_MFI_MA_Period,1={{ [2, (ma_period | default(0) | int) - 10] | max }}
+MFI_Indi_MFI_MA_Period,2=2
+MFI_Indi_MFI_MA_Period,3={{ (ma_period | default(0) | int) + 10 }}
+MFI_Indi_MFI_MA_Period,F=1
+MFI_Indi_MFI_MA_Period={{ (ma_period | default(0) | int) }}
+MFI_Indi_MFI_Shift={{ shift | default(0) }}
+MFI_LotSize={{ lot_size | default(0) }}
+MFI_PriceStopMethod=0
+MFI_SignalOpenFilterMethod=1
+MFI_SignalOpenLevel={{ (signal_open_level | default(0) | replace("(float)", "") | float) }}
+MFI_TickFilterMethod=1
