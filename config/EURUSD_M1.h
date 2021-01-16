@@ -6,7 +6,7 @@
 // Defines indicator's parameter values for the given pair symbol and timeframe.
 struct Indi_MFI_Params_M1 : MFIParams {
   Indi_MFI_Params_M1() : MFIParams(indi_mfi_defaults, PERIOD_M1) {
-    ma_period = 6;
+    ma_period = 4;
     shift = 0;
   }
 } indi_mfi_m1;
@@ -17,7 +17,7 @@ struct Stg_MFI_Params_M1 : StgParams {
   Stg_MFI_Params_M1() : StgParams(stg_mfi_defaults) {
     lot_size = 0;
     signal_open_method = 0;
-    signal_open_filter = 1;
+    signal_open_filter = 2;
     signal_open_level = (float)20;
     signal_open_boost = 0;
     signal_close_method = 0;

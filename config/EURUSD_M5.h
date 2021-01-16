@@ -6,7 +6,7 @@
 // Defines indicator's parameter values for the given pair symbol and timeframe.
 struct Indi_MFI_Params_M5 : MFIParams {
   Indi_MFI_Params_M5() : MFIParams(indi_mfi_defaults, PERIOD_M5) {
-    ma_period = 10;
+    ma_period = 14;
     shift = 0;
   }
 } indi_mfi_m5;
