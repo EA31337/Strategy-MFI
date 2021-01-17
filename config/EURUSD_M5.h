@@ -6,7 +6,7 @@
 // Defines indicator's parameter values for the given pair symbol and timeframe.
 struct Indi_MFI_Params_M5 : MFIParams {
   Indi_MFI_Params_M5() : MFIParams(indi_mfi_defaults, PERIOD_M5) {
-    ma_period = 14;
+    ma_period = 22;
     shift = 0;
   }
 } indi_mfi_m5;
@@ -18,10 +18,10 @@ struct Stg_MFI_Params_M5 : StgParams {
     lot_size = 0;
     signal_open_method = 0;
     signal_open_filter = 1;
-    signal_open_level = (float)20;
+    signal_open_level = (float)25;
     signal_open_boost = 0;
     signal_close_method = 0;
-    signal_close_level = (float)20;
+    signal_close_level = (float)25;
     price_stop_method = 0;
     price_stop_level = (float)2;
     tick_filter_method = 1;
