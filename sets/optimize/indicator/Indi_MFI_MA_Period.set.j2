@@ -1,4 +1,4 @@
-MFI_Indi_MFI_MA_Period,1={{ ((ma_period | default(0) | int) - 10) | abs }}
+MFI_Indi_MFI_MA_Period,1={{ [((ma_period | default(0) | int) - 10), 2] | max }}
 MFI_Indi_MFI_MA_Period,2=2
 MFI_Indi_MFI_MA_Period,3={{ (ma_period | default(0) | int) + 10 }}
 MFI_Indi_MFI_MA_Period,F=1
