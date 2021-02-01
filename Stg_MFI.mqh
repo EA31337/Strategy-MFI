@@ -70,12 +70,12 @@ class Stg_MFI : public Strategy {
     // Initialize strategy initial values.
     MFIParams _indi_params(indi_mfi_defaults, _tf);
     StgParams _stg_params(stg_mfi_defaults);
-    if (!Terminal::IsOptimization()) {
-      SetParamsByTf<MFIParams>(_indi_params, _tf, indi_mfi_m1, indi_mfi_m5, indi_mfi_m15, indi_mfi_m30, indi_mfi_h1,
-                               indi_mfi_h4, indi_mfi_h8);
-      SetParamsByTf<StgParams>(_stg_params, _tf, stg_mfi_m1, stg_mfi_m5, stg_mfi_m15, stg_mfi_m30, stg_mfi_h1,
-                               stg_mfi_h4, stg_mfi_h8);
-    }
+#ifdef __config__
+    SetParamsByTf<MFIParams>(_indi_params, _tf, indi_mfi_m1, indi_mfi_m5, indi_mfi_m15, indi_mfi_m30, indi_mfi_h1,
+                             indi_mfi_h4, indi_mfi_h8);
+    SetParamsByTf<StgParams>(_stg_params, _tf, stg_mfi_m1, stg_mfi_m5, stg_mfi_m15, stg_mfi_m30, stg_mfi_h1, stg_mfi_h4,
+                             stg_mfi_h8);
+#endif
     // Initialize indicator.
     MFIParams mfi_params(_indi_params);
     _stg_params.SetIndicator(new Indi_MFI(_indi_params));
