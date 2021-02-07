@@ -4,19 +4,20 @@
  */
 
 // User input params.
-INPUT float MFI_LotSize = 0;               // Lot size
-INPUT int MFI_SignalOpenMethod = 0;        // Signal open method (-7-7)
-INPUT float MFI_SignalOpenLevel = 20;      // Signal open level (-49-49)
-INPUT int MFI_SignalOpenFilterMethod = 1;  // Signal open filter method
-INPUT int MFI_SignalOpenBoostMethod = 0;   // Signal open boost method
-INPUT int MFI_SignalCloseMethod = 0;       // Signal close method (-7-7)
-INPUT float MFI_SignalCloseLevel = 20;     // Signal close level (-49-49)
-INPUT int MFI_PriceStopMethod = 0;         // Price stop method
-INPUT float MFI_PriceStopLevel = 0;        // Price stop level
-INPUT int MFI_TickFilterMethod = 1;        // Tick filter method
-INPUT float MFI_MaxSpread = 4.0;           // Max spread to trade (pips)
-INPUT int MFI_Shift = 0;                   // Shift (relative to the current bar, 0 - default)
-INPUT int MFI_OrderCloseTime = -20;        // Order close time in mins (>0) or bars (<0)
+INPUT string __MFI_Parameters__ = "-- MFI strategy params --";  // >>> MFI <<<
+INPUT float MFI_LotSize = 0;                                    // Lot size
+INPUT int MFI_SignalOpenMethod = 0;                             // Signal open method (-7-7)
+INPUT float MFI_SignalOpenLevel = 20;                           // Signal open level (-49-49)
+INPUT int MFI_SignalOpenFilterMethod = 1;                       // Signal open filter method
+INPUT int MFI_SignalOpenBoostMethod = 0;                        // Signal open boost method
+INPUT int MFI_SignalCloseMethod = 0;                            // Signal close method (-7-7)
+INPUT float MFI_SignalCloseLevel = 20;                          // Signal close level (-49-49)
+INPUT int MFI_PriceStopMethod = 0;                              // Price stop method
+INPUT float MFI_PriceStopLevel = 0;                             // Price stop level
+INPUT int MFI_TickFilterMethod = 1;                             // Tick filter method
+INPUT float MFI_MaxSpread = 4.0;                                // Max spread to trade (pips)
+INPUT int MFI_Shift = 0;                                        // Shift (relative to the current bar, 0 - default)
+INPUT int MFI_OrderCloseTime = -20;                             // Order close time in mins (>0) or bars (<0)
 INPUT string __MFI_Indi_MFI_Parameters__ =
     "-- MFI strategy: MFI indicator params --";                                  // >>> MFI strategy: MFI indicator <<<
 INPUT int MFI_Indi_MFI_MA_Period = 12;                                           // MA Period
@@ -69,12 +70,12 @@ class Stg_MFI : public Strategy {
     // Initialize strategy initial values.
     MFIParams _indi_params(indi_mfi_defaults, _tf);
     StgParams _stg_params(stg_mfi_defaults);
-    if (!Terminal::IsOptimization()) {
-      SetParamsByTf<MFIParams>(_indi_params, _tf, indi_mfi_m1, indi_mfi_m5, indi_mfi_m15, indi_mfi_m30, indi_mfi_h1,
-                               indi_mfi_h4, indi_mfi_h8);
-      SetParamsByTf<StgParams>(_stg_params, _tf, stg_mfi_m1, stg_mfi_m5, stg_mfi_m15, stg_mfi_m30, stg_mfi_h1,
-                               stg_mfi_h4, stg_mfi_h8);
-    }
+#ifdef __config__
+    SetParamsByTf<MFIParams>(_indi_params, _tf, indi_mfi_m1, indi_mfi_m5, indi_mfi_m15, indi_mfi_m30, indi_mfi_h1,
+                             indi_mfi_h4, indi_mfi_h8);
+    SetParamsByTf<StgParams>(_stg_params, _tf, stg_mfi_m1, stg_mfi_m5, stg_mfi_m15, stg_mfi_m30, stg_mfi_h1, stg_mfi_h4,
+                             stg_mfi_h8);
+#endif
     // Initialize indicator.
     MFIParams mfi_params(_indi_params);
     _stg_params.SetIndicator(new Indi_MFI(_indi_params));
@@ -84,7 +85,6 @@ class Stg_MFI : public Strategy {
     _stg_params.SetTf(_tf, _Symbol);
     // Initialize strategy instance.
     Strategy *_strat = new Stg_MFI(_stg_params, "MFI");
-    _stg_params.SetStops(_strat, _strat);
     return _strat;
   }
 
