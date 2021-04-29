@@ -47,7 +47,7 @@ struct Stg_MFI_Params : StgParams {
 
   // Struct constructors.
   Stg_MFI_Params(MFIParams &_iparams, StgParams &_sparams)
-      : iparams(indi_mfi_defaults, _iparams.tf), sparams(stg_mfi_defaults) {
+      : iparams(indi_mfi_defaults, _iparams.tf.GetTf()), sparams(stg_mfi_defaults) {
     iparams = _iparams;
     sparams = _sparams;
   }
