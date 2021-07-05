@@ -8,7 +8,7 @@ INPUT string __MFI_Parameters__ = "-- MFI strategy params --";  // >>> MFI <<<
 INPUT float MFI_LotSize = 0;                                    // Lot size
 INPUT int MFI_SignalOpenMethod = 2;                             // Signal open method (-127-127)
 INPUT float MFI_SignalOpenLevel = 20;                           // Signal open level (-49-49)
-INPUT int MFI_SignalOpenFilterMethod = 32;                       // Signal open filter method
+INPUT int MFI_SignalOpenFilterMethod = 32;                      // Signal open filter method
 INPUT int MFI_SignalOpenBoostMethod = 0;                        // Signal open boost method
 INPUT int MFI_SignalCloseMethod = 2;                            // Signal close method (-127-127)
 INPUT float MFI_SignalCloseLevel = 20;                          // Signal close level (-49-49)
@@ -92,27 +92,26 @@ class Stg_MFI : public Strategy {
    */
   bool SignalOpen(ENUM_ORDER_TYPE _cmd, int _method = 0, float _level = 0.0f, int _shift = 0) {
     Indi_MFI *_indi = GetIndicator();
-    bool _is_valid = _indi[CURR].IsValid() && _indi[PREV].IsValid() && _indi[PPREV].IsValid();
+    bool _is_valid = _indi[_shift].IsValid() && _indi[_shift + 1].IsValid() && _indi[_shift + 2].IsValid();
     bool _result = _is_valid;
     double _level_pips = _level * Chart().GetPipSize();
     if (_is_valid) {
+      IndicatorSignal _signals = _indi.GetSignals(4, _shift);
       switch (_cmd) {
         // Buy: Crossing 20 upwards.
         case ORDER_TYPE_BUY:
-          _result &= _indi[PREV][0] < (50 - _level) || _indi[PPREV][0] < (50 - _level);
+          //_result &= _indi[_shift][0] < (50 - _level);
+          _result &= _indi[_shift][0] > (50 - _level) && _indi[_shift + 2][0] < (50 - _level);
           _result &= _indi.IsIncreasing(2);
-          if (METHOD(_method, 0)) _result &= _indi[CURR][0] >= (50 - _level);
-          if (METHOD(_method, 1)) _result &= _indi[PPREV][0] >= (50 - _level);
-          if (METHOD(_method, 2)) _result &= _indi.IsIncreasing(3);
+          _result &= _method > 0 ? _signals.CheckSignals(_method) : _signals.CheckSignalsAll(-_method);
           // @todo: Add breakouts and positive/negative divergence signals.
           break;
         // Sell: Crossing 80 downwards.
         case ORDER_TYPE_SELL:
-          _result &= _indi[PREV][0] > (50 + _level) || _indi[PPREV][0] > (50 + _level);
+          //_result &= _indi[_shift][0] > (50 + _level);
+          _result &= _indi[_shift][0] < (50 + _level) && _indi[_shift + 2][0] > (50 + _level);
           _result &= _indi.IsDecreasing(2);
-          if (METHOD(_method, 0)) _result &= _indi[CURR][0] <= (50 - _level);
-          if (METHOD(_method, 1)) _result &= _indi[PPREV][0] <= (50 - _level);
-          if (METHOD(_method, 2)) _result &= _indi.IsDecreasing(3);
+          _result &= _method > 0 ? _signals.CheckSignals(_method) : _signals.CheckSignalsAll(-_method);
           // @todo: Add breakouts and positive/negative divergence signals.
           break;
       }
