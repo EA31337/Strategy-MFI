@@ -18,6 +18,8 @@ INPUT float MFI_PriceStopLevel = 0;         // Price stop level
 INPUT int MFI_TickFilterMethod = 1;         // Tick filter method
 INPUT float MFI_MaxSpread = 4.0;            // Max spread to trade (pips)
 INPUT short MFI_Shift = 0;                  // Shift (relative to the current bar, 0 - default)
+INPUT float MFI_OrderCloseLoss = 0;         // Order close loss
+INPUT float MFI_OrderCloseProfit = 0;       // Order close profit
 INPUT int MFI_OrderCloseTime = -20;         // Order close time in mins (>0) or bars (<0)
 INPUT_GROUP("MFI strategy: MFI indicator params");
 INPUT int MFI_Indi_MFI_MA_Period = 12;                                           // MA Period
@@ -37,8 +39,11 @@ struct Stg_MFI_Params_Defaults : StgParams {
   Stg_MFI_Params_Defaults()
       : StgParams(::MFI_SignalOpenMethod, ::MFI_SignalOpenFilterMethod, ::MFI_SignalOpenLevel,
                   ::MFI_SignalOpenBoostMethod, ::MFI_SignalCloseMethod, ::MFI_SignalCloseFilter, ::MFI_SignalCloseLevel,
-                  ::MFI_PriceStopMethod, ::MFI_PriceStopLevel, ::MFI_TickFilterMethod, ::MFI_MaxSpread, ::MFI_Shift,
-                  ::MFI_OrderCloseTime) {}
+                  ::MFI_PriceStopMethod, ::MFI_PriceStopLevel, ::MFI_TickFilterMethod, ::MFI_MaxSpread, ::MFI_Shift) {
+    Set(STRAT_PARAM_OCL, MFI_OrderCloseLoss);
+    Set(STRAT_PARAM_OCP, MFI_OrderCloseProfit);
+    Set(STRAT_PARAM_OCT, MFI_OrderCloseTime);
+  }
 } stg_mfi_defaults;
 
 // Struct to define strategy parameters to override.
