@@ -11,6 +11,7 @@ INPUT float MFI_SignalOpenLevel = 20;       // Signal open level (-49-49)
 INPUT int MFI_SignalOpenFilterMethod = 32;  // Signal open filter method
 INPUT int MFI_SignalOpenBoostMethod = 0;    // Signal open boost method
 INPUT int MFI_SignalCloseMethod = 2;        // Signal close method (-127-127)
+INPUT int MFI_SignalCloseFilter = 0;        // Signal close filter (-127-127)
 INPUT float MFI_SignalCloseLevel = 20;      // Signal close level (-49-49)
 INPUT int MFI_PriceStopMethod = 1;          // Price stop method
 INPUT float MFI_PriceStopLevel = 0;         // Price stop level
@@ -35,8 +36,9 @@ struct Indi_MFI_Params_Defaults : MFIParams {
 struct Stg_MFI_Params_Defaults : StgParams {
   Stg_MFI_Params_Defaults()
       : StgParams(::MFI_SignalOpenMethod, ::MFI_SignalOpenFilterMethod, ::MFI_SignalOpenLevel,
-                  ::MFI_SignalOpenBoostMethod, ::MFI_SignalCloseMethod, ::MFI_SignalCloseLevel, ::MFI_PriceStopMethod,
-                  ::MFI_PriceStopLevel, ::MFI_TickFilterMethod, ::MFI_MaxSpread, ::MFI_Shift, ::MFI_OrderCloseTime) {}
+                  ::MFI_SignalOpenBoostMethod, ::MFI_SignalCloseMethod, ::MFI_SignalCloseFilter, ::MFI_SignalCloseLevel,
+                  ::MFI_PriceStopMethod, ::MFI_PriceStopLevel, ::MFI_TickFilterMethod, ::MFI_MaxSpread, ::MFI_Shift,
+                  ::MFI_OrderCloseTime) {}
 } stg_mfi_defaults;
 
 // Struct to define strategy parameters to override.
