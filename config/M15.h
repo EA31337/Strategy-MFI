@@ -17,7 +17,6 @@ struct Stg_MFI_Params_M15 : StgParams {
   Stg_MFI_Params_M15() : StgParams(stg_mfi_defaults) {
     lot_size = 0;
     signal_open_method = 2;
-    signal_open_filter = 32;
     signal_open_level = (float)30;
     signal_open_boost = 0;
     signal_close_method = 2;
