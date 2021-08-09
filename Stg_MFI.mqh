@@ -9,6 +9,7 @@ INPUT float MFI_LotSize = 0;                // Lot size
 INPUT int MFI_SignalOpenMethod = 2;         // Signal open method (-127-127)
 INPUT float MFI_SignalOpenLevel = 20;       // Signal open level (-49-49)
 INPUT int MFI_SignalOpenFilterMethod = 32;  // Signal open filter method
+INPUT int MFI_SignalOpenFilterTime = 6;     // Signal open filter time
 INPUT int MFI_SignalOpenBoostMethod = 0;    // Signal open boost method
 INPUT int MFI_SignalCloseMethod = 2;        // Signal close method (-127-127)
 INPUT int MFI_SignalCloseFilter = 0;        // Signal close filter (-127-127)
@@ -43,6 +44,7 @@ struct Stg_MFI_Params_Defaults : StgParams {
     Set(STRAT_PARAM_OCL, MFI_OrderCloseLoss);
     Set(STRAT_PARAM_OCP, MFI_OrderCloseProfit);
     Set(STRAT_PARAM_OCT, MFI_OrderCloseTime);
+    Set(STRAT_PARAM_SOFT, MFI_SignalOpenFilterTime);
   }
 } stg_mfi_defaults;
 
