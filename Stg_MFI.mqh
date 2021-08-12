@@ -6,15 +6,15 @@
 // User input params.
 INPUT_GROUP("MFI strategy: strategy params");
 INPUT float MFI_LotSize = 0;                // Lot size
-INPUT int MFI_SignalOpenMethod = 2;         // Signal open method (-127-127)
+INPUT int MFI_SignalOpenMethod = 0;         // Signal open method (-127-127)
 INPUT float MFI_SignalOpenLevel = 20;       // Signal open level (-49-49)
 INPUT int MFI_SignalOpenFilterMethod = 32;  // Signal open filter method
 INPUT int MFI_SignalOpenFilterTime = 6;     // Signal open filter time
 INPUT int MFI_SignalOpenBoostMethod = 0;    // Signal open boost method
-INPUT int MFI_SignalCloseMethod = 2;        // Signal close method (-127-127)
+INPUT int MFI_SignalCloseMethod = 0;        // Signal close method (-127-127)
 INPUT int MFI_SignalCloseFilter = 0;        // Signal close filter (-127-127)
 INPUT float MFI_SignalCloseLevel = 20;      // Signal close level (-49-49)
-INPUT int MFI_PriceStopMethod = 1;          // Price stop method
+INPUT int MFI_PriceStopMethod = 1;          // Price stop method (0-127)
 INPUT float MFI_PriceStopLevel = 0;         // Price stop level
 INPUT int MFI_TickFilterMethod = 1;         // Tick filter method
 INPUT float MFI_MaxSpread = 4.0;            // Max spread to trade (pips)
@@ -23,7 +23,7 @@ INPUT float MFI_OrderCloseLoss = 0;         // Order close loss
 INPUT float MFI_OrderCloseProfit = 0;       // Order close profit
 INPUT int MFI_OrderCloseTime = -20;         // Order close time in mins (>0) or bars (<0)
 INPUT_GROUP("MFI strategy: MFI indicator params");
-INPUT int MFI_Indi_MFI_MA_Period = 12;                                           // MA Period
+INPUT int MFI_Indi_MFI_MA_Period = 22;                                           // MA Period
 INPUT ENUM_APPLIED_VOLUME MFI_Indi_MFI_Applied_Volume = (ENUM_APPLIED_VOLUME)0;  // Applied volume.
 INPUT int MFI_Indi_MFI_Shift = 0;                                                // Shift
 
