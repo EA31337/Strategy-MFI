@@ -21,7 +21,7 @@ INPUT float MFI_MaxSpread = 4.0;            // Max spread to trade (pips)
 INPUT short MFI_Shift = 0;                  // Shift (relative to the current bar, 0 - default)
 INPUT float MFI_OrderCloseLoss = 0;         // Order close loss
 INPUT float MFI_OrderCloseProfit = 0;       // Order close profit
-INPUT int MFI_OrderCloseTime = -20;         // Order close time in mins (>0) or bars (<0)
+INPUT int MFI_OrderCloseTime = -30;         // Order close time in mins (>0) or bars (<0)
 INPUT_GROUP("MFI strategy: MFI indicator params");
 INPUT int MFI_Indi_MFI_MA_Period = 22;                                           // MA Period
 INPUT ENUM_APPLIED_VOLUME MFI_Indi_MFI_Applied_Volume = (ENUM_APPLIED_VOLUME)0;  // Applied volume.
