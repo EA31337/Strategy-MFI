@@ -41,6 +41,7 @@ struct Stg_MFI_Params_Defaults : StgParams {
       : StgParams(::MFI_SignalOpenMethod, ::MFI_SignalOpenFilterMethod, ::MFI_SignalOpenLevel,
                   ::MFI_SignalOpenBoostMethod, ::MFI_SignalCloseMethod, ::MFI_SignalCloseFilter, ::MFI_SignalCloseLevel,
                   ::MFI_PriceStopMethod, ::MFI_PriceStopLevel, ::MFI_TickFilterMethod, ::MFI_MaxSpread, ::MFI_Shift) {
+    Set(STRAT_PARAM_LS, MFI_LotSize);
     Set(STRAT_PARAM_OCL, MFI_OrderCloseLoss);
     Set(STRAT_PARAM_OCP, MFI_OrderCloseProfit);
     Set(STRAT_PARAM_OCT, MFI_OrderCloseTime);
