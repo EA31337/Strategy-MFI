@@ -49,19 +49,6 @@ struct Stg_MFI_Params_Defaults : StgParams {
   }
 } stg_mfi_defaults;
 
-// Struct to define strategy parameters to override.
-struct Stg_MFI_Params : StgParams {
-  MFIParams iparams;
-  StgParams sparams;
-
-  // Struct constructors.
-  Stg_MFI_Params(MFIParams &_iparams, StgParams &_sparams)
-      : iparams(indi_mfi_defaults, _iparams.tf.GetTf()), sparams(stg_mfi_defaults) {
-    iparams = _iparams;
-    sparams = _sparams;
-  }
-};
-
 #ifdef __config__
 // Loads pair specific param values.
 #include "config/H1.h"
