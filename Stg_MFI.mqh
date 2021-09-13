@@ -33,7 +33,7 @@ INPUT int MFI_Indi_MFI_Shift = 0;                                               
 struct Indi_MFI_Params_Defaults : MFIParams {
   Indi_MFI_Params_Defaults()
       : MFIParams(::MFI_Indi_MFI_MA_Period, ::MFI_Indi_MFI_Applied_Volume, ::MFI_Indi_MFI_Shift) {}
-} indi_mfi_defaults;
+};
 
 // Defines struct with default user strategy values.
 struct Stg_MFI_Params_Defaults : StgParams {
@@ -47,7 +47,7 @@ struct Stg_MFI_Params_Defaults : StgParams {
     Set(STRAT_PARAM_OCT, MFI_OrderCloseTime);
     Set(STRAT_PARAM_SOFT, MFI_SignalOpenFilterTime);
   }
-} stg_mfi_defaults;
+};
 
 #ifdef __config__
 // Loads pair specific param values.
@@ -67,7 +67,9 @@ class Stg_MFI : public Strategy {
 
   static Stg_MFI *Init(ENUM_TIMEFRAMES _tf = NULL) {
     // Initialize strategy initial values.
+    Indi_MFI_Params_Defaults indi_mfi_defaults;
     MFIParams _indi_params(indi_mfi_defaults, _tf);
+    Stg_MFI_Params_Defaults stg_mfi_defaults;
     StgParams _stg_params(stg_mfi_defaults);
 #ifdef __config__
     SetParamsByTf<MFIParams>(_indi_params, _tf, indi_mfi_m1, indi_mfi_m5, indi_mfi_m15, indi_mfi_m30, indi_mfi_h1,
