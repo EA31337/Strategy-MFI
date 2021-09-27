@@ -78,11 +78,11 @@ class Stg_MFI : public Strategy {
                              stg_mfi_h8);
 #endif
     // Initialize indicator.
-    _stg_params.SetIndicator(new Indi_MFI(_indi_params));
     // Initialize Strategy instance.
     ChartParams _cparams(_tf, _Symbol);
     TradeParams _tparams;
     Strategy *_strat = new Stg_MFI(_stg_params, _tparams, _cparams, "MFI");
+    _strat.SetIndicator(new Indi_MFI(_indi_params));
     return _strat;
   }
 
