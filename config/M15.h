@@ -4,8 +4,8 @@
  */
 
 // Defines indicator's parameter values for the given pair symbol and timeframe.
-struct Indi_MFI_Params_M15 : MFIParams {
-  Indi_MFI_Params_M15() : MFIParams(indi_mfi_defaults, PERIOD_M15) {
+struct Indi_MFI_Params_M15 : IndiMFIParams {
+  Indi_MFI_Params_M15() : IndiMFIParams(indi_mfi_defaults, PERIOD_M15) {
     ma_period = 14;
     shift = 0;
   }
