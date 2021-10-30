@@ -67,13 +67,9 @@ class Stg_MFI : public Strategy {
 
   static Stg_MFI *Init(ENUM_TIMEFRAMES _tf = NULL) {
     // Initialize strategy initial values.
-    Indi_MFI_Params_Defaults indi_mfi_defaults;
-    IndiMFIParams _indi_params(indi_mfi_defaults, _tf);
     Stg_MFI_Params_Defaults stg_mfi_defaults;
     StgParams _stg_params(stg_mfi_defaults);
 #ifdef __config__
-    SetParamsByTf<IndiMFIParams>(_indi_params, _tf, indi_mfi_m1, indi_mfi_m5, indi_mfi_m15, indi_mfi_m30, indi_mfi_h1,
-                                 indi_mfi_h4, indi_mfi_h8);
     SetParamsByTf<StgParams>(_stg_params, _tf, stg_mfi_m1, stg_mfi_m5, stg_mfi_m15, stg_mfi_m30, stg_mfi_h1, stg_mfi_h4,
                              stg_mfi_h8);
 #endif
@@ -82,8 +78,16 @@ class Stg_MFI : public Strategy {
     ChartParams _cparams(_tf, _Symbol);
     TradeParams _tparams;
     Strategy *_strat = new Stg_MFI(_stg_params, _tparams, _cparams, "MFI");
-    _strat.SetIndicator(new Indi_MFI(_indi_params));
     return _strat;
+  }
+
+  /**
+   * Event on strategy's init.
+   */
+  void OnInit() {
+    Indi_MFI_Params_Defaults indi_mfi_defaults;
+    IndiMFIParams _indi_params(indi_mfi_defaults, Get<ENUM_TIMEFRAMES>(STRAT_PARAM_TF));
+    SetIndicator(new Indi_MFI(_indi_params));
   }
 
   /**
