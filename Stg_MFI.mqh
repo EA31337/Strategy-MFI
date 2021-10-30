@@ -29,12 +29,6 @@ INPUT int MFI_Indi_MFI_Shift = 0;                                               
 
 // Structs.
 
-// Defines struct with default user indicator values.
-struct Indi_MFI_Params_Defaults : IndiMFIParams {
-  Indi_MFI_Params_Defaults()
-      : IndiMFIParams(::MFI_Indi_MFI_MA_Period, ::MFI_Indi_MFI_Applied_Volume, ::MFI_Indi_MFI_Shift) {}
-};
-
 // Defines struct with default user strategy values.
 struct Stg_MFI_Params_Defaults : StgParams {
   Stg_MFI_Params_Defaults()
@@ -85,8 +79,8 @@ class Stg_MFI : public Strategy {
    * Event on strategy's init.
    */
   void OnInit() {
-    Indi_MFI_Params_Defaults indi_mfi_defaults;
-    IndiMFIParams _indi_params(indi_mfi_defaults, Get<ENUM_TIMEFRAMES>(STRAT_PARAM_TF));
+    IndiMFIParams _indi_params(::MFI_Indi_MFI_MA_Period, ::MFI_Indi_MFI_Applied_Volume, ::MFI_Indi_MFI_Shift);
+    _indi_params.SetTf(Get<ENUM_TIMEFRAMES>(STRAT_PARAM_TF));
     SetIndicator(new Indi_MFI(_indi_params));
   }
 
