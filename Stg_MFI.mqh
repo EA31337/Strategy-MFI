@@ -101,7 +101,7 @@ class Stg_MFI : public Strategy {
       case ORDER_TYPE_BUY:
         //_result &= _indi[_shift][0] < (50 - _level);
         _result &= _indi[_shift][0] > (50 - _level) && _indi[_shift + 2][0] < (50 - _level);
-        _result &= _indi.IsIncreasing(2);
+        _result &= _indi.IsIncreasing(2, 0, _shift);
         _result &= _method > 0 ? _signals.CheckSignals(_method) : _signals.CheckSignalsAll(-_method);
         // @todo: Add breakouts and positive/negative divergence signals.
         break;
@@ -109,7 +109,7 @@ class Stg_MFI : public Strategy {
       case ORDER_TYPE_SELL:
         //_result &= _indi[_shift][0] > (50 + _level);
         _result &= _indi[_shift][0] < (50 + _level) && _indi[_shift + 2][0] > (50 + _level);
-        _result &= _indi.IsDecreasing(2);
+        _result &= _indi.IsDecreasing(2, 0, _shift);
         _result &= _method > 0 ? _signals.CheckSignals(_method) : _signals.CheckSignalsAll(-_method);
         // @todo: Add breakouts and positive/negative divergence signals.
         break;
