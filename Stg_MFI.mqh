@@ -59,7 +59,7 @@ class Stg_MFI : public Strategy {
   Stg_MFI(StgParams &_sparams, TradeParams &_tparams, ChartParams &_cparams, string _name = "")
       : Strategy(_sparams, _tparams, _cparams, _name) {}
 
-  static Stg_MFI *Init(ENUM_TIMEFRAMES _tf = NULL) {
+  static Stg_MFI *Init(ENUM_TIMEFRAMES _tf = NULL, EA* _ea = NULL) {
     // Initialize strategy initial values.
     Stg_MFI_Params_Defaults stg_mfi_defaults;
     StgParams _stg_params(stg_mfi_defaults);
